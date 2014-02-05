@@ -57,4 +57,36 @@ describe(".serve", function() {
 			done();
 		});
 	});
+
+	it("should 404 correctly", function(done) {
+		http.get("http://localhost:12321/non.existant.file.js", function(res) {
+			res.statusCode.should.equal(404);
+			done();
+		});
+	});
+});
+
+describe(".middlware", function() {
+	var server;
+
+	before(function(done) {
+		server = http.createServer();
+		server.listen(12321, done);
+	});
+
+	after(function(done) { server.close(done); });
+
+	it("should call next without error if 404", function(done) {
+		server.once("request", function(req, res) {
+			staticify.middleware(req, res, function(err) {
+				res.statusCode.should.not.equal(404);
+				should.not.exist(err);
+
+				res.end();
+				done();
+			});
+		});
+
+		http.get("http://localhost:12321/non.existant.file.js");
+	});
 });

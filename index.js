@@ -44,6 +44,7 @@ function stripVersion(p) {
 module.exports = function(root, options) {
 	var versions = buildVersionHash(root);
 	options = options || {};
+	var redirect = options.redirect !== false;
 
 	function getVersionedPath(p) {
 		if(!versions[p]) return p;
@@ -59,18 +60,31 @@ module.exports = function(root, options) {
 	function serve(req, res) {
 		var filePath = stripVersion(req.url);
 
-		send(req, filePath)
+		var sent = send(req, filePath)
 			.maxage(filePath == req.url ? 0 : 1000 * 60 * 60 * 23 * 365)
 			.index(options.index || "index.html")
 			.hidden(options.hidden)
 			.root(root)
-			.pipe(res);
+
+		sent.pipe(res);
+		return sent;
+	}
+
+	function middleware(req, res, next) {
+		if(req.method !== "GET" && req.method !== "HEAD") return next();
+
+		var stream = serve(req, res);
+		stream.on("error", function(err) {
+			if(err.status == 404) return next();
+			return next(err);
+		});
 	}
 
 	return {
 		_versions: versions,
 		getVersionedPath: getVersionedPath,
 		stripVersion: stripVersion,
-		serve: serve
+		serve: serve,
+		middleware: middleware
 	}
 }

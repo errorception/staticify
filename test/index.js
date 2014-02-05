@@ -1,9 +1,8 @@
 var should = require("should"),
-	staticify = require("../");
+	staticify = require("../")(__dirname);
 
-describe(".buildVersionHash", function() {
+describe("constructor", function() {
 	it("should build a hash of versions", function() {
-		staticify.buildVersionHash(__dirname);
 		staticify._versions.should.be.an.Object;
 		Object.keys(staticify._versions).should.not.equal(0);
 	});

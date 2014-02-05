@@ -3,26 +3,44 @@ var send = require("send"),
 	crypto = require("crypto"),
 	fs = require("fs");
 
-var versions = {};
-
-function buildVersionHash(directory, root) {
+function buildVersionHash(directory, root, versions) {
+	// Walks the directory tree, finding files, generating a version hash
 	var files = fs.readdirSync(directory);
 	root = root || directory;
+	versions = versions || {};
 
 	files.forEach(function(file) {
 		var filePath = path.join(directory, file),
 			stat = fs.statSync(filePath);
 
 		if(stat.isDirectory()) {
-			buildVersionHash(filePath, root);
+			buildVersionHash(filePath, root, versions);		// Whee!
 		} else if(stat.isFile()) {
 			var hash = crypto.createHash("md5").update(fs.readFileSync(filePath, "utf8"), "utf8").digest("hex");
 			versions["/" + path.relative(root, filePath)] = hash;
 		}
 	});
+
+	return versions;
 }
 
-function stripVersion(p) {
+function Staticify(root) {
+	this._root = root;
+	this._versions = buildVersionHash(root);
+}
+
+Staticify.prototype.getVersionedPath = function(p) {
+	if(!this._versions[p]) return p;
+
+	var fileName = path.basename(p),
+		fileNameParts = fileName.split(".");
+
+	fileNameParts.push(this._versions[p], fileNameParts.pop());
+
+	return path.join(path.dirname(p), fileNameParts.join("."))
+}
+
+Staticify.prototype.stripVersion = function(p) {
 	var fileName = path.basename(p);
 
 	var fileNameParts = fileName.split(".");
@@ -39,25 +57,6 @@ function stripVersion(p) {
 	return p;
 }
 
-function getVersionedPath(p) {
-	if(!versions[p]) return p;
-
-	var fileName = path.basename(p),
-		fileNameParts = fileName.split(".");
-
-	var extension = fileNameParts.pop();
-	fileNameParts.push(versions[p], extension);
-
-	return path.join(path.dirname(p), fileNameParts.join("."))
-}
-
-function serve(req, res) {
-	
-}
-
-module.exports = {
-	_versions: versions,
-	buildVersionHash: buildVersionHash,
-	stripVersion: stripVersion,
-	getVersionedPath: getVersionedPath
+module.exports = function(root) {
+	return new Staticify(root);
 }

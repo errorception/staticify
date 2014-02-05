@@ -24,23 +24,7 @@ function buildVersionHash(directory, root, versions) {
 	return versions;
 }
 
-function Staticify(root) {
-	this._root = root;
-	this._versions = buildVersionHash(root);
-}
-
-Staticify.prototype.getVersionedPath = function(p) {
-	if(!this._versions[p]) return p;
-
-	var fileName = path.basename(p),
-		fileNameParts = fileName.split(".");
-
-	fileNameParts.push(this._versions[p], fileNameParts.pop());
-
-	return path.join(path.dirname(p), fileNameParts.join("."))
-}
-
-Staticify.prototype.stripVersion = function(p) {
+function stripVersion(p) {
 	var fileName = path.basename(p);
 
 	var fileNameParts = fileName.split(".");
@@ -57,6 +41,36 @@ Staticify.prototype.stripVersion = function(p) {
 	return p;
 }
 
-module.exports = function(root) {
-	return new Staticify(root);
+module.exports = function(root, options) {
+	var versions = buildVersionHash(root);
+	options = options || {};
+
+	function getVersionedPath(p) {
+		if(!versions[p]) return p;
+
+		var fileName = path.basename(p),
+			fileNameParts = fileName.split(".");
+
+		fileNameParts.push(versions[p], fileNameParts.pop());
+
+		return path.join(path.dirname(p), fileNameParts.join("."))
+	}
+
+	function serve(req, res) {
+		var filePath = stripVersion(req.url);
+
+		send(req, filePath)
+			.maxage(filePath == req.url ? 0 : 1000 * 60 * 60 * 23 * 365)
+			.index(options.index || "index.html")
+			.hidden(options.hidden)
+			.root(root)
+			.pipe(res);
+	}
+
+	return {
+		_versions: versions,
+		getVersionedPath: getVersionedPath,
+		stripVersion: stripVersion,
+		serve: serve
+	}
 }

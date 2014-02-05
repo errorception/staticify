@@ -1,4 +1,5 @@
 var should = require("should"),
+	http = require("http"),
 	staticify = require("../")(__dirname);
 
 describe("constructor", function() {
@@ -28,5 +29,32 @@ describe(".getVersionedPath", function() {
 
 	it("shouldn't add a version number if the path isn't known", function() {
 		staticify.getVersionedPath("/unknown.js").should.equal("/unknown.js");
+	});
+});
+
+describe(".serve", function() {
+	var server;
+
+	before(function(done) {
+		server = http.createServer(staticify.serve);
+		server.listen(12321, done);
+	});
+
+	after(function(done) { server.close(done); });
+
+	it("should serve files without a version tag", function(done) {
+		http.get("http://localhost:12321/index.js", function(res) {
+			res.headers["cache-control"].indexOf("max-age=0").should.not.equal(-1);
+			res.statusCode.should.equal(200);
+			done();
+		});
+	});
+
+	it("should serve files with a version tag", function(done) {
+		http.get("http://localhost:12321/index.4e2502b01a4c92b0a51b1a5a3271eab6.js", function(res) {
+			res.headers["cache-control"].indexOf("max-age=30222000").should.not.equal(-1);
+			res.statusCode.should.equal(200);
+			done();
+		});
 	});
 });

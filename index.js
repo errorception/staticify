@@ -1,7 +1,9 @@
 var send = require("send"),
 	path = require("path"),
 	crypto = require("crypto"),
-	fs = require("fs");
+	fs = require("fs"),
+	through = require("through"),
+	split = require("split");
 
 function buildVersionHash(directory, root, versions) {
 	// Walks the directory tree, finding files, generating a version hash
@@ -80,11 +82,25 @@ module.exports = function(root, options) {
 		});
 	}
 
+	function replacePaths() {
+		var urls = Object.keys(this._versions),
+			versions = this._verisons;
+
+		return split().pipe(through(function(data) {
+			urls.forEach(function(url) {
+				data = data.replace(url, getVersionedPath(url));
+			});
+
+			this.queue(data);
+		}));
+	}
+
 	return {
 		_versions: versions,
 		getVersionedPath: getVersionedPath,
 		stripVersion: stripVersion,
 		serve: serve,
-		middleware: middleware
+		middleware: middleware,
+		replacePaths: replacePaths
 	}
 }

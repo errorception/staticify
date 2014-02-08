@@ -1,6 +1,7 @@
 var should = require("should"),
 	http = require("http"),
-	staticify = require("../")(__dirname);
+	through = require("through"),
+	staticify = require("../")(__dirname + "/../");
 
 describe("constructor", function() {
 	it("should build a hash of versions", function() {
@@ -88,5 +89,19 @@ describe(".middlware", function() {
 		});
 
 		http.get("http://localhost:12321/non.existant.file.js");
+	});
+});
+
+describe(".replacePaths", function() {
+	it("should replace paths in a stream, and output a stream", function(done) {
+		var stream = through().pause().queue("body { background: url('/index.js') }").end();
+		stream.pipe(staticify.replacePaths()).on("data", function(data) {
+			data.should.startWith("body { background: url('/index.");
+			data.should.endWith("') }");
+			data.indexOf("index.js").should.equal(-1);
+			data.should.match(/index\.[0-9a-f]{32}\.js/i);
+
+			done();
+		}).resume();
 	});
 });

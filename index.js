@@ -3,6 +3,7 @@ var send = require("send"),
 	crypto = require("crypto"),
 	fs = require("fs"),
 	through = require("through"),
+	url = require("url"),
 	split = require("split");
 
 function buildVersionHash(directory, root, versions) {
@@ -27,6 +28,7 @@ function buildVersionHash(directory, root, versions) {
 }
 
 function stripVersion(p) {
+	// index.<hash>.js -> index.js
 	var fileName = path.basename(p);
 
 	var fileNameParts = fileName.split(".");
@@ -49,6 +51,7 @@ module.exports = function(root, options) {
 	var redirect = options.redirect !== false;
 
 	function getVersionedPath(p) {
+		// index.js -> index.<hash>.js
 		if(!versions[p]) return p;
 
 		var fileName = path.basename(p),
@@ -60,10 +63,10 @@ module.exports = function(root, options) {
 	}
 
 	function serve(req, res) {
-		var filePath = stripVersion(req.url);
+		var filePath = stripVersion(url.parse(req.url).pathname);
 
 		var sent = send(req, filePath)
-			.maxage(filePath == req.url ? 0 : 1000 * 60 * 60 * 23 * 365)
+			.maxage(filePath == req.url ? 0 : 1000 * 60 * 60 * 24 * 365)
 			.index(options.index || "index.html")
 			.hidden(options.hidden)
 			.root(root)

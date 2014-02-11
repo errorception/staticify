@@ -53,7 +53,7 @@ describe(".serve", function() {
 
 	it("should serve files with a version tag", function(done) {
 		http.get("http://localhost:12321/index.4e2502b01a4c92b0a51b1a5a3271eab6.js", function(res) {
-			res.headers["cache-control"].indexOf("max-age=30222000").should.not.equal(-1);
+			res.headers["cache-control"].indexOf("max-age=31536000").should.not.equal(-1);
 			res.statusCode.should.equal(200);
 			done();
 		});

@@ -1,7 +1,7 @@
 var should = require("should"),
 	http = require("http"),
-	through = require("through"),
-	staticify = require("../")(__dirname + "/../");
+	staticify = require("../")(__dirname + "/../"),
+	through2 = require("through2");
 
 describe("constructor", function() {
 	it("should build a hash of versions", function() {
@@ -37,7 +37,9 @@ describe(".serve", function() {
 	var server;
 
 	before(function(done) {
-		server = http.createServer(staticify.serve);
+		server = http.createServer(function(req, res) {
+			staticify.serve(req).pipe(res);
+		});
 		server.listen(12321, done);
 	});
 
@@ -67,7 +69,7 @@ describe(".serve", function() {
 	});
 });
 
-describe(".middlware", function() {
+describe(".middleware", function() {
 	var server;
 
 	before(function(done) {
@@ -80,7 +82,6 @@ describe(".middlware", function() {
 	it("should call next without error if 404", function(done) {
 		server.once("request", function(req, res) {
 			staticify.middleware(req, res, function(err) {
-				res.statusCode.should.not.equal(404);
 				should.not.exist(err);
 
 				res.end();
@@ -93,15 +94,12 @@ describe(".middlware", function() {
 });
 
 describe(".replacePaths", function() {
-	it("should replace paths in a stream, and output a stream", function(done) {
-		var stream = through().pause().queue("body { background: url('/index.js') }").end();
-		stream.pipe(staticify.replacePaths()).on("data", function(data) {
-			data.should.startWith("body { background: url('/index.");
-			data.should.endWith("') }");
-			data.indexOf("index.js").should.equal(-1);
-			data.should.match(/index\.[0-9a-f]{32}\.js/i);
+	it("should replace paths in a stream, and output a stream", function() {
+		var results = staticify.replacePaths("body { background: url('/index.js') }");
 
-			done();
-		}).resume();
+		results.should.startWith("body { background: url('/index.");
+		results.should.endWith("') }");
+		results.indexOf("index.js").should.equal(-1);
+		results.should.match(/index\.[0-9a-f]{32}\.js/i);
 	});
 });

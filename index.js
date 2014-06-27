@@ -2,9 +2,7 @@ var send = require("send"),
 	path = require("path"),
 	crypto = require("crypto"),
 	fs = require("fs"),
-	through = require("through"),
-	url = require("url"),
-	split = require("split");
+	url = require("url");
 
 function buildVersionHash(directory, root, versions) {
 	// Walks the directory tree, finding files, generating a version hash
@@ -62,40 +60,40 @@ module.exports = function(root, options) {
 		return path.join(path.dirname(p), fileNameParts.join("."))
 	}
 
-	function serve(req, res) {
+	function serve(req) {
 		var filePath = stripVersion(url.parse(req.url).pathname);
 
-		var sent = send(req, filePath)
+		return send(req, filePath)
 			.maxage(filePath == req.url ? 0 : 1000 * 60 * 60 * 24 * 365)
 			.index(options.index || "index.html")
 			.hidden(options.hidden)
 			.root(root)
-
-		sent.pipe(res);
-		return sent;
 	}
 
 	function middleware(req, res, next) {
 		if(req.method !== "GET" && req.method !== "HEAD") return next();
 
-		var stream = serve(req, res);
-		stream.on("error", function(err) {
-			if(err.status == 404) return next();
-			return next(err);
-		});
+		serve(req, res)
+			.on("error", function(err) {
+				if(err.status == 404) return next();
+				return next(err);
+			})
+			.pipe(res);
 	}
 
-	function replacePaths() {
+	function replacePaths(fileContents) {
 		var urls = Object.keys(this._versions),
 			versions = this._verisons;
 
-		return split().pipe(through(function(data) {
-			urls.forEach(function(url) {
-				data = data.replace(url, getVersionedPath(url));
-			});
+		urls.forEach(function(url) {
+			fileContents = fileContents.replace(url, getVersionedPath(url));
+		});
 
-			this.queue(data);
-		}));
+		return fileContents;
+	}
+
+	function refresh() {
+		versions = buildVersionHash(root);
 	}
 
 	return {
@@ -103,6 +101,7 @@ module.exports = function(root, options) {
 		getVersionedPath: getVersionedPath,
 		stripVersion: stripVersion,
 		serve: serve,
+		refresh: refresh,
 		middleware: middleware,
 		replacePaths: replacePaths
 	}

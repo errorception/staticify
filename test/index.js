@@ -94,7 +94,7 @@ describe(".middleware", function() {
 });
 
 describe(".replacePaths", function() {
-	it("should replace paths in a stream, and output a stream", function() {
+	it("should replace paths in a string", function() {
 		var results = staticify.replacePaths("body { background: url('/index.js') }");
 
 		results.should.startWith("body { background: url('/index.");

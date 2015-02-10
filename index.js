@@ -82,8 +82,7 @@ module.exports = function(root, options) {
 	}
 
 	function replacePaths(fileContents) {
-		var urls = Object.keys(this._versions),
-			versions = this._verisons;
+		var urls = Object.keys(versions);
 
 		urls.forEach(function(url) {
 			fileContents = fileContents.replace(url, getVersionedPath(url));

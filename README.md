@@ -3,7 +3,7 @@ staticify
 
 A better static asset handler for node.js / express.js
 
-Provider helpers to add a version identifier to your static asset public URLs, and remove the hash before serving the file from the file system.
+Provides helpers to add a version identifier to your static asset's public URLs, and to remove the hash before serving the file from the file system.
 
 This allows us to set a far-futures expires headers for static assets.
 

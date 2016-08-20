@@ -63,11 +63,12 @@ module.exports = function(root, options) {
 	function serve(req) {
 		var filePath = stripVersion(url.parse(req.url).pathname);
 
-		return send(req, filePath)
-			.maxage(filePath == req.url ? 0 : 1000 * 60 * 60 * 24 * 365)
-			.index(options.index || "index.html")
-			.hidden(options.hidden)
-			.root(root)
+		return send(req, filePath,{
+			maxage: filePath == req.url ? 0 : 1000 * 60 * 60 * 24 * 365,
+			index: options.index || "index.html",
+			ignore: options.hidden,
+			root: root
+		});
 	}
 
 	function middleware(req, res, next) {

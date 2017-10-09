@@ -21,11 +21,11 @@
     "expressjs"
   ],
   "dependencies": {
-    "send": "~0.15.3"
+    "send": "~0.16.1"
   },
   "devDependencies": {
-    "should": "~3.1.2",
-    "mocha": "~1.17.1",
-    "through2": "~0.4.1"
+    "should": "~13.1.1",
+    "mocha": "~4.0.1",
+    "through2": "~2.0.3"
   }
 }

@@ -1,6 +1,6 @@
 {
   "name": "staticify",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "A better static asset handler for node.js",
   "main": "index.js",
   "repository": {

@@ -6,7 +6,7 @@ const fs = require('fs');
 const url = require('url');
 const send = require('send');
 
-function buildVersionHash(directory, root, versions) {
+function buildVersionHash(directory, root, versions, shortHash = true) {
     // Walks the directory tree, finding files, generating a version hash
     const files = fs.readdirSync(directory);
 
@@ -18,13 +18,16 @@ function buildVersionHash(directory, root, versions) {
         const stat = fs.statSync(filePath);
 
         if (stat.isDirectory()) {
-            buildVersionHash(filePath, root, versions); // Whee!
+            buildVersionHash(filePath, root, versions, shortHash); // Whee!
         } else if (stat.isFile()) {
             const fileStr = fs.readFileSync(filePath, 'utf8');
             const hash = crypto.createHash('md5')
                         .update(fileStr, 'utf8')
-                        .digest('hex')
-                        .slice(0, 7);
+                        .digest('hex');
+
+            if (shortHash) {
+                hash.slice(0, 7);
+            }
 
             versions[`/${path.posix.relative(root, filePath)}`] = hash;
         }
@@ -33,33 +36,19 @@ function buildVersionHash(directory, root, versions) {
     return versions;
 }
 
-function stripVersion(p) {
-    // index.<hash>.js -> index.js
-    const fileName = path.basename(p);
-    const fileNameParts = fileName.split('.');
+module.exports = (root, options = {}) => {
+    options.shortHash = typeof options.shortHash === 'undefined';
 
-    if (fileNameParts.length >= 3 &&
-        fileNameParts[fileNameParts.length - 2].length === 7 &&
-        /^[0-9a-f]{7}$/i.exec(fileNameParts[fileNameParts.length - 2])[0] === fileNameParts[fileNameParts.length - 2]
-    ) {
-        const stripped = fileNameParts.slice(0, fileNameParts.length - 2);
-
-        stripped.push(fileNameParts[fileNameParts.length - 1]);
-
-        return path.join(path.dirname(p), stripped.join('.'));
-    }
-
-    return p;
-}
-
-module.exports = (root, options) => {
     let versions = buildVersionHash(root);
-    options = options || {};
 
-    function getVersionedPath(p) {
+    function getVersionedPath(p, shortHash = options.shortHash) {
         // index.js -> index.<hash>.js
         if (!versions[p]) {
             return p;
+        }
+
+        if (shortHash === true) {
+            versions[p] = versions[p].slice(0, 7);
         }
 
         const fileName = path.basename(p);
@@ -82,6 +71,27 @@ module.exports = (root, options) => {
         });
     }
 
+    function stripVersion(p, shortHash = options.shortHash) {
+        // index.<hash>.js -> index.js
+        const fileName = path.basename(p);
+        const fileNameParts = fileName.split('.');
+        const HASH_LEN = shortHash ? 7 : 32;
+        const re = new RegExp(`^[0-9a-f]{${HASH_LEN}}$`, 'i');
+
+        if (fileNameParts.length >= 3 &&
+            fileNameParts[fileNameParts.length - 2].length === HASH_LEN &&
+            re.exec(fileNameParts[fileNameParts.length - 2])[0] === fileNameParts[fileNameParts.length - 2]
+        ) {
+            const stripped = fileNameParts.slice(0, fileNameParts.length - 2);
+
+            stripped.push(fileNameParts[fileNameParts.length - 1]);
+
+            return path.join(path.dirname(p), stripped.join('.'));
+        }
+
+        return p;
+    }
+
     function middleware(req, res, next) {
         if (req.method !== 'GET' && req.method !== 'HEAD') {
             return next();
@@ -101,7 +111,7 @@ module.exports = (root, options) => {
         const urls = Object.keys(versions);
 
         urls.forEach(url => {
-            fileContents = fileContents.replace(url, getVersionedPath(url));
+            fileContents = fileContents.replace(url, getVersionedPath(url, options.shortHash));
         });
 
         return fileContents;

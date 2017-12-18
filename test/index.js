@@ -1,8 +1,7 @@
 var should = require("should"),
 	http = require("http"),
 	path = require("path"),
-	staticify = require("../")(path.join(__dirname, "/../")),
-	through2 = require("through2");
+	staticify = require("../")(path.join(__dirname, "/../"));
 
 describe("constructor", function() {
 	it("should build a hash of versions", function() {

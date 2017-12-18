@@ -1,5 +1,8 @@
-staticify
-===
+# staticify
+
+[![NPM version](https://img.shields.io/npm/v/staticify.svg)](https://www.npmjs.com/package/staticify)
+[![dependencies Status](https://img.shields.io/david/errorception/staticify.svg)](https://david-dm.org/errorception/staticify)
+[![devDependencies Status](https://img.shields.io/david/dev/errorception/staticify.svg)](https://david-dm.org/errorception/staticify?type=dev)
 
 A better static asset handler for node.js / express.js
 
@@ -20,10 +23,10 @@ For example:
 
 The version hashes are the md5 of the contents of the static asset. Thus, every file has it's own unique version identifier. When a file changes, only it's own hash changes. This lets you have a far-futures expires header for your static assets without worrying about cache-invalidation, while ensuring that the user only downloads the files that have changed since your last deployment.
 
-With express.js
----
+## With express.js
 
 ```javascript
+var path = require("path");
 var staticify = require("staticify")(path.join(__dirname, "public"));
 
 ...
@@ -38,10 +41,10 @@ And in your template:
 <link href="${getVersionedPath('/home.css')}" rel="stylesheet">
 ```
 
-Usage
----
+## Usage
 
 Install from npm:
+
 ```
 npm install staticify
 ```
@@ -49,6 +52,7 @@ npm install staticify
 Initialise the staticify helper with the path of your public directory:
 
 ```javascript
+var path = require("path");
 var statificy = require("staticify")(path.join(__dirname, "public"));
 ```
 
@@ -57,6 +61,7 @@ This returns an object with the following helpers:
 ### .getVersionedPath(path)
 
 Does the following transformation to the `path`, and returns immediately:
+
 ```javascript
 staticify.getVersionedPath('/path/to/file.ext'); // --> /path/to/file.<md5 of the contents of file.ext>.ext
 ```
@@ -80,7 +85,9 @@ Takes the input string, and replaces any paths it can understand. For example:
 ```javascript
 staticify.replacePaths("body { background: url('/index.js') }");
 ```
+
 returns
+
 ```javascript
 "body { background: url('/index.d766c4a983224a3696bc4913b9e47305.js') }"
 ```
@@ -95,7 +102,7 @@ Removes the md5 identifier in a path.
 staticify.stripVersion('/path/to/file.ae2b1fca515949e5d54fb22b8ed95575.ext'); // --> /path/to/file.ext
 ```
 
-Note, this function doesn't verify that the hash is valid. It simply finds what looks like a hash and strips it from the path. 
+Note, this function doesn't verify that the hash is valid. It simply finds what looks like a hash and strips it from the path.
 
 ### .refresh()
 
@@ -109,6 +116,6 @@ Handles an incoming request for the file. Internally calls `.stripVersion` to st
 staticify.serve(req).pipe(res)
 ```
 
-License
----
+## License
+
 MIT

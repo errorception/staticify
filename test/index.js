@@ -1,6 +1,7 @@
 var should = require("should"),
 	http = require("http"),
-	staticify = require("../")(__dirname + "/../"),
+	path = require("path"),
+	staticify = require("../")(path.join(__dirname, "/../")),
 	through2 = require("through2");
 
 describe("constructor", function() {
@@ -43,7 +44,9 @@ describe(".serve", function() {
 		server.listen(12321, done);
 	});
 
-	after(function(done) { server.close(done); });
+	after(function(done) {
+		server.close(done);
+	});
 
 	it("should serve files without a version tag", function(done) {
 		http.get("http://localhost:12321/index.js", function(res) {
@@ -77,7 +80,9 @@ describe(".middleware", function() {
 		server.listen(12321, done);
 	});
 
-	after(function(done) { server.close(done); });
+	after(function(done) {
+		server.close(done);
+	});
 
 	it("should call next without error if 404", function(done) {
 		server.once("request", function(req, res) {

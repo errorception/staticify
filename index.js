@@ -21,7 +21,10 @@ function buildVersionHash(directory, root, versions) {
             buildVersionHash(filePath, root, versions); // Whee!
         } else if (stat.isFile()) {
             const fileStr = fs.readFileSync(filePath, 'utf8');
-            const hash = crypto.createHash('md5').update(fileStr, 'utf8').digest('hex');
+            const hash = crypto.createHash('md5')
+                        .update(fileStr, 'utf8')
+                        .digest('hex')
+                        .slice(0, 7);
 
             versions[`/${path.posix.relative(root, filePath)}`] = hash;
         }
@@ -36,8 +39,8 @@ function stripVersion(p) {
     const fileNameParts = fileName.split('.');
 
     if (fileNameParts.length >= 3 &&
-        fileNameParts[fileNameParts.length - 2].length === 32 &&
-        /^[0-9a-f]{32}$/i.exec(fileNameParts[fileNameParts.length - 2])[0] === fileNameParts[fileNameParts.length - 2]
+        fileNameParts[fileNameParts.length - 2].length === 7 &&
+        /^[0-9a-f]{7}$/i.exec(fileNameParts[fileNameParts.length - 2])[0] === fileNameParts[fileNameParts.length - 2]
     ) {
         const stripped = fileNameParts.slice(0, fileNameParts.length - 2);
 

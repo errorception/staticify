@@ -14,7 +14,7 @@ describe('constructor', () => {
 
 describe('.stripVersion', () => {
     it('should strip the version hash from a path when necessary', () => {
-        staticify.stripVersion(path.normalize('/script.4e2502b01a4c92b0a51b1a5a3271eab6.js')).should.equal(path.normalize('/script.js'));
+        staticify.stripVersion(path.normalize('/script.4e2502b.js')).should.equal(path.normalize('/script.js'));
         staticify.stripVersion(path.normalize('/script.js')).should.equal(path.normalize('/script.js'));
     });
 });
@@ -26,8 +26,8 @@ describe('.getVersionedPath', () => {
         versioned.should.have.a.lengthOf(3);
         versioned[0].should.equal('/index');
         versioned[2].should.equal('js');
-        versioned[1].should.have.a.lengthOf(32);
-        /^[0-9a-f]{32}$/i.exec(versioned[1])[0].should.equal(versioned[1]);
+        versioned[1].should.have.a.lengthOf(7);
+        /^[0-9a-f]{7}$/i.exec(versioned[1])[0].should.equal(versioned[1]);
     });
 
     it('shouldn\'t add a version number if the path isn\'t known', () => {
@@ -58,7 +58,7 @@ describe('.serve', () => {
     });
 
     it('should serve files with a version tag', done => {
-        http.get('http://localhost:12321/index.4e2502b01a4c92b0a51b1a5a3271eab6.js', res => {
+        http.get('http://localhost:12321/index.4e2502b.js', res => {
             res.headers['cache-control'].indexOf('max-age=31536000').should.not.equal(-1);
             res.statusCode.should.equal(200);
             done();
@@ -106,6 +106,6 @@ describe('.replacePaths', () => {
         results.should.startWith('body { background: url(\'/index.');
         results.should.endWith('\') }');
         results.indexOf('index.js').should.equal(-1);
-        results.should.match(/index\.[0-9a-f]{32}\.js/i);
+        results.should.match(/index\.[0-9a-f]{7}\.js/i);
     });
 });

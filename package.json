@@ -22,6 +22,9 @@
     "express",
     "expressjs"
   ],
+  "files": [
+    "index.js"
+  ],
   "dependencies": {
     "send": "~0.16.1"
   },

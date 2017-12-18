@@ -14,9 +14,9 @@ function buildVersionHash(directory, root, versions) {
 		var filePath = path.join(directory, file),
 			stat = fs.statSync(filePath);
 
-		if(stat.isDirectory()) {
+		if (stat.isDirectory()) {
 			buildVersionHash(filePath, root, versions);		// Whee!
-		} else if(stat.isFile()) {
+		} else if (stat.isFile()) {
 			var hash = crypto.createHash("md5").update(fs.readFileSync(filePath, "utf8"), "utf8").digest("hex");
 			versions["/" + path.relative(root, filePath)] = hash;
 		}
@@ -30,9 +30,9 @@ function stripVersion(p) {
 	var fileName = path.basename(p);
 
 	var fileNameParts = fileName.split(".");
-	if(
+	if (
 		fileNameParts.length >= 3
-		&& fileNameParts[fileNameParts.length - 2].length == 32
+		&& fileNameParts[fileNameParts.length - 2].length === 32
 		&& /^[0-9a-f]{32}$/i.exec(fileNameParts[fileNameParts.length - 2])[0] === fileNameParts[fileNameParts.length - 2]
 	) {
 		var stripped = fileNameParts.slice(0, fileNameParts.length - 2);
@@ -46,25 +46,27 @@ function stripVersion(p) {
 module.exports = function(root, options) {
 	var versions = buildVersionHash(root);
 	options = options || {};
-	var redirect = options.redirect !== false;
 
 	function getVersionedPath(p) {
 		// index.js -> index.<hash>.js
-		if(!versions[p]) return p;
+		if (!versions[p]) {
+			return p;
+		}
 
 		var fileName = path.basename(p),
 			fileNameParts = fileName.split(".");
 
 		fileNameParts.push(versions[p], fileNameParts.pop());
 
-		return path.join(path.dirname(p), fileNameParts.join("."))
+		return path.join(path.dirname(p), fileNameParts.join("."));
 	}
 
 	function serve(req) {
 		var filePath = stripVersion(url.parse(req.url).pathname);
+		var MAX_AGE = 1000 * 60 * 60 * 24 * 365; // 1 year
 
-		return send(req, filePath,{
-			maxage: filePath == req.url ? 0 : 1000 * 60 * 60 * 24 * 365,
+		return send(req, filePath, {
+			maxage: filePath === req.url ? 0 : MAX_AGE,
 			index: options.index || "index.html",
 			ignore: options.hidden,
 			root: root
@@ -72,11 +74,15 @@ module.exports = function(root, options) {
 	}
 
 	function middleware(req, res, next) {
-		if(req.method !== "GET" && req.method !== "HEAD") return next();
+		if (req.method !== "GET" && req.method !== "HEAD") {
+			return next();
+		}
 
 		serve(req, res)
 			.on("error", function(err) {
-				if(err.status == 404) return next();
+				if (err.status === 404) {
+					return next();
+				}
 				return next(err);
 			})
 			.pipe(res);
@@ -104,5 +110,5 @@ module.exports = function(root, options) {
 		refresh: refresh,
 		middleware: middleware,
 		replacePaths: replacePaths
-	}
-}
+	};
+};

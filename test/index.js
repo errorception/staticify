@@ -1,109 +1,111 @@
-var should = require("should"),
-	http = require("http"),
-	path = require("path"),
-	staticify = require("../")(path.join(__dirname, "/../"));
+'use strict';
 
-describe("constructor", function() {
-	it("should build a hash of versions", function() {
-		staticify._versions.should.be.an.Object;
-		Object.keys(staticify._versions).should.not.equal(0);
-	});
+const http = require('http');
+const path = require('path');
+const should = require('should');
+const staticify = require('../')(path.join(__dirname, '/../'));
+
+describe('constructor', () => {
+    it('should build a hash of versions', () => {
+        staticify._versions.should.be.an.Object();
+        Object.keys(staticify._versions).should.not.equal(0);
+    });
 });
 
-describe(".stripVersion", function() {
-	it("should strip the version hash from a path when necessary", function() {
-		staticify.stripVersion(path.normalize("/script.4e2502b01a4c92b0a51b1a5a3271eab6.js")).should.equal(path.normalize("/script.js"));
-		staticify.stripVersion(path.normalize("/script.js")).should.equal(path.normalize("/script.js"));
-	});
+describe('.stripVersion', () => {
+    it('should strip the version hash from a path when necessary', () => {
+        staticify.stripVersion(path.normalize('/script.4e2502b01a4c92b0a51b1a5a3271eab6.js')).should.equal(path.normalize('/script.js'));
+        staticify.stripVersion(path.normalize('/script.js')).should.equal(path.normalize('/script.js'));
+    });
 });
 
-describe(".getVersionedPath", function() {
-	it("should add a version number to the path", function() {
-		var versioned = staticify.getVersionedPath("/index.js");
-		versioned = versioned.split(".");
-		versioned.should.have.a.lengthOf(3);
-		versioned[0].should.equal("/index");
-		versioned[2].should.equal("js");
-		versioned[1].should.have.a.lengthOf(32);
-		/^[0-9a-f]{32}$/i.exec(versioned[1])[0].should.equal(versioned[1]);
-	});
+describe('.getVersionedPath', () => {
+    it('should add a version number to the path', () => {
+        let versioned = staticify.getVersionedPath('/index.js');
+        versioned = versioned.split('.');
+        versioned.should.have.a.lengthOf(3);
+        versioned[0].should.equal('/index');
+        versioned[2].should.equal('js');
+        versioned[1].should.have.a.lengthOf(32);
+        /^[0-9a-f]{32}$/i.exec(versioned[1])[0].should.equal(versioned[1]);
+    });
 
-	it("shouldn't add a version number if the path isn't known", function() {
-		staticify.getVersionedPath("/unknown.js").should.equal("/unknown.js");
-	});
+    it('shouldn\'t add a version number if the path isn\'t known', () => {
+        staticify.getVersionedPath('/unknown.js').should.equal('/unknown.js');
+    });
 });
 
-describe(".serve", function() {
-	var server;
+describe('.serve', () => {
+    let server;
 
-	before(function(done) {
-		server = http.createServer(function(req, res) {
-			staticify.serve(req).pipe(res);
-		});
-		server.listen(12321, done);
-	});
+    before(done => {
+        server = http.createServer((req, res) => {
+            staticify.serve(req).pipe(res);
+        });
+        server.listen(12321, done);
+    });
 
-	after(function(done) {
-		server.close(done);
-	});
+    after(done => {
+        server.close(done);
+    });
 
-	it("should serve files without a version tag", function(done) {
-		http.get("http://localhost:12321/index.js", function(res) {
-			res.headers["cache-control"].indexOf("max-age=0").should.not.equal(-1);
-			res.statusCode.should.equal(200);
-			done();
-		});
-	});
+    it('should serve files without a version tag', done => {
+        http.get('http://localhost:12321/index.js', res => {
+            res.headers['cache-control'].indexOf('max-age=0').should.not.equal(-1);
+            res.statusCode.should.equal(200);
+            done();
+        });
+    });
 
-	it("should serve files with a version tag", function(done) {
-		http.get("http://localhost:12321/index.4e2502b01a4c92b0a51b1a5a3271eab6.js", function(res) {
-			res.headers["cache-control"].indexOf("max-age=31536000").should.not.equal(-1);
-			res.statusCode.should.equal(200);
-			done();
-		});
-	});
+    it('should serve files with a version tag', done => {
+        http.get('http://localhost:12321/index.4e2502b01a4c92b0a51b1a5a3271eab6.js', res => {
+            res.headers['cache-control'].indexOf('max-age=31536000').should.not.equal(-1);
+            res.statusCode.should.equal(200);
+            done();
+        });
+    });
 
-	it("should 404 correctly", function(done) {
-		http.get("http://localhost:12321/non.existant.file.js", function(res) {
-			res.statusCode.should.equal(404);
-			done();
-		});
-	});
+    it('should 404 correctly', done => {
+        http.get('http://localhost:12321/non.existant.file.js', res => {
+            res.statusCode.should.equal(404);
+            done();
+        });
+    });
 });
 
-describe(".middleware", function() {
-	var server;
+describe('.middleware', () => {
+    let server;
 
-	before(function(done) {
-		server = http.createServer();
-		server.listen(12321, done);
-	});
+    before(done => {
+        server = http.createServer();
+        server.listen(12321, done);
+    });
 
-	after(function(done) {
-		server.close(done);
-	});
+    after(done => {
+        server.close(done);
+    });
 
-	it("should call next without error if 404", function(done) {
-		server.once("request", function(req, res) {
-			staticify.middleware(req, res, function(err) {
-				should.not.exist(err);
+    it('should call next without error if 404', done => {
+        server.once('request', (req, res) => {
+            staticify.middleware(req, res, err => {
+                should.not.exist(err);
 
-				res.end();
-				done();
-			});
-		});
+                res.end();
+                done();
+            });
+        });
 
-		http.get("http://localhost:12321/non.existant.file.js");
-	});
+        http.get('http://localhost:12321/non.existant.file.js');
+    });
 });
 
-describe(".replacePaths", function() {
-	it("should replace paths in a string", function() {
-		var results = staticify.replacePaths("body { background: url('/index.js') }");
+describe('.replacePaths', () => {
+    it('should replace paths in a string', () => {
+        const results = staticify.replacePaths('body { background: url(\'/index.js\') }');
 
-		results.should.startWith("body { background: url('/index.");
-		results.should.endWith("') }");
-		results.indexOf("index.js").should.equal(-1);
-		results.should.match(/index\.[0-9a-f]{32}\.js/i);
-	});
+        results.should.startWith('body { background: url(\'/index.');
+        results.should.endWith('\') }');
+        results.indexOf('index.js').should.equal(-1);
+        results.should.match(/index\.[0-9a-f]{32}\.js/i);
+    });
 });

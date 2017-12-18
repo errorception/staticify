@@ -11,14 +11,14 @@ function buildVersionHash(directory, root, versions) {
 	versions = versions || {};
 
 	files.forEach(function(file) {
-		var filePath = path.join(directory, file),
+		var filePath = path.posix.join(directory, file),
 			stat = fs.statSync(filePath);
 
 		if (stat.isDirectory()) {
 			buildVersionHash(filePath, root, versions);		// Whee!
 		} else if (stat.isFile()) {
 			var hash = crypto.createHash("md5").update(fs.readFileSync(filePath, "utf8"), "utf8").digest("hex");
-			versions["/" + path.relative(root, filePath)] = hash;
+			versions["/" + path.posix.relative(root, filePath)] = hash;
 		}
 	});
 
@@ -58,7 +58,7 @@ module.exports = function(root, options) {
 
 		fileNameParts.push(versions[p], fileNameParts.pop());
 
-		return path.join(path.dirname(p), fileNameParts.join("."));
+		return path.posix.join(path.dirname(p), fileNameParts.join("."));
 	}
 
 	function serve(req) {

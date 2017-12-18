@@ -5,10 +5,10 @@
   "main": "index.js",
   "repository": {
     "type": "git",
-    "url": "git@github.com:errorception/staticify.git"
+    "url": "git+ssh://git@github.com/errorception/staticify.git"
   },
   "scripts": {
-    "test": "./node_modules/mocha/bin/mocha --reporter spec"
+    "test": "mocha --reporter spec"
   },
   "author": "Rakesh Pai <rakeshpai@errorception.com>",
   "license": "MIT",

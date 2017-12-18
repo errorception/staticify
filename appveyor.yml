@@ -14,12 +14,9 @@ install:
 
 test_script:
   - node --version && npm --version
-  - cmd: npm test
+  - npm test
 
 build: off
-
-matrix:
-  fast_finish: true
 
 cache:
   - node_modules -> appveyor.yml,package.json,package-lock.json

@@ -12,8 +12,8 @@ describe("constructor", function() {
 
 describe(".stripVersion", function() {
 	it("should strip the version hash from a path when necessary", function() {
-		staticify.stripVersion("/script.4e2502b01a4c92b0a51b1a5a3271eab6.js").should.equal("/script.js");
-		staticify.stripVersion("/script.js").should.equal("/script.js");
+		staticify.stripVersion(path.normalize("/script.4e2502b01a4c92b0a51b1a5a3271eab6.js")).should.equal(path.normalize("/script.js"));
+		staticify.stripVersion(path.normalize("/script.js")).should.equal(path.normalize("/script.js"));
 	});
 });
 

@@ -2,7 +2,7 @@
 
 [![NPM version](https://img.shields.io/npm/v/staticify.svg)](https://www.npmjs.com/package/staticify)
 [![Linux Build Status](https://img.shields.io/travis/errorception/staticify/master.svg?label=Linux%20build)](https://travis-ci.org/errorception/staticify)
-[![Windows Build status](https://img.shields.io/appveyor/ci/errorception/staticify/master.svg?label=Windows%20build)](https://ci.appveyor.com/project/errorception/staticify/branch/master)
+[![Windows Build status](https://img.shields.io/appveyor/ci/rakeshpai/staticify/master.svg?label=Windows%20build)](https://ci.appveyor.com/project/rakeshpai/staticify/branch/master)
 [![dependencies Status](https://img.shields.io/david/errorception/staticify.svg)](https://david-dm.org/errorception/staticify)
 [![devDependencies Status](https://img.shields.io/david/dev/errorception/staticify.svg)](https://david-dm.org/errorception/staticify?type=dev)
 

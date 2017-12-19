@@ -6,7 +6,9 @@ const fs = require('fs');
 const url = require('url');
 const send = require('send');
 
-function buildVersionHash(directory, root, versions, shortHash) {
+const MAX_AGE = 1000 * 60 * 60 * 24 * 365; // 1 year
+
+const buildVersionHash = (directory, root, versions, shortHash) => {
     // Walks the directory tree, finding files, generating a version hash
     const files = fs.readdirSync(directory);
 
@@ -34,23 +36,18 @@ function buildVersionHash(directory, root, versions, shortHash) {
     });
 
     return versions;
-}
+};
 
-module.exports = (root, {
-    shortHash = true,
-    index = 'index.html',
-    hidden = false,
-    ...sendOptions
-} = {}) => {
+module.exports = (root, {shortHash = true, ...sendOptions} = {}) => {
     let versions = buildVersionHash(root);
 
-    function getVersionedPath(p) {
+    const getVersionedPath = p => {
         // index.js -> index.<hash>.js
         if (!versions[p]) {
             return p;
         }
 
-        if (shortHash === true) {
+        if (shortHash) {
             versions[p] = versions[p].slice(0, 7);
         }
 
@@ -60,22 +57,9 @@ module.exports = (root, {
         fileNameParts.push(versions[p], fileNameParts.pop());
 
         return path.posix.join(path.dirname(p), fileNameParts.join('.'));
-    }
+    };
 
-    function serve(req) {
-        const filePath = stripVersion(url.parse(req.url).pathname);
-        const MAX_AGE = 1000 * 60 * 60 * 24 * 365; // 1 year
-
-        return send(req, filePath, {
-            maxage: filePath === req.url ? 0 : MAX_AGE,
-            ignore: hidden,
-            index,
-            root,
-            ...sendOptions
-        });
-    }
-
-    function stripVersion(p) {
+    const stripVersion = p => {
         // index.<hash>.js -> index.js
         const fileName = path.basename(p);
         const fileNameParts = fileName.split('.');
@@ -94,9 +78,19 @@ module.exports = (root, {
         }
 
         return p;
-    }
+    };
 
-    function middleware(req, res, next) {
+    const serve = req => {
+        const filePath = stripVersion(url.parse(req.url).pathname);
+
+        return send(req, filePath, {
+            root,
+            maxage: filePath === req.url ? 0 : MAX_AGE,
+            ...sendOptions
+        });
+    };
+
+    const middleware = (req, res, next) => {
         if (req.method !== 'GET' && req.method !== 'HEAD') {
             return next();
         }
@@ -109,21 +103,17 @@ module.exports = (root, {
                 return next(err);
             })
             .pipe(res);
-    }
+    };
 
-    function replacePaths(fileContents) {
-        const urls = Object.keys(versions);
+    const replacePaths = fileContents => {
+        return Object.keys(versions).reduce((f, url) => {
+            return f.replace(url, getVersionedPath(url));
+        }, fileContents);
+    };
 
-        urls.forEach(url => {
-            fileContents = fileContents.replace(url, getVersionedPath(url, shortHash));
-        });
-
-        return fileContents;
-    }
-
-    function refresh() {
+    const refresh = () => {
         versions = buildVersionHash(root);
-    }
+    };
 
     return {
         _versions: versions,

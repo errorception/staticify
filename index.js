@@ -6,7 +6,7 @@ const fs = require('fs');
 const url = require('url');
 const send = require('send');
 
-function buildVersionHash(directory, root, versions, shortHash = true) {
+function buildVersionHash(directory, root, versions, shortHash) {
     // Walks the directory tree, finding files, generating a version hash
     const files = fs.readdirSync(directory);
 
@@ -36,12 +36,15 @@ function buildVersionHash(directory, root, versions, shortHash = true) {
     return versions;
 }
 
-module.exports = (root, options = {}) => {
-    options.shortHash = typeof options.shortHash === 'undefined';
-
+module.exports = (root, {
+    shortHash = true,
+    index = 'index.html',
+    hidden = false,
+    ...sendOptions
+} = {}) => {
     let versions = buildVersionHash(root);
 
-    function getVersionedPath(p, shortHash = options.shortHash) {
+    function getVersionedPath(p) {
         // index.js -> index.<hash>.js
         if (!versions[p]) {
             return p;
@@ -65,13 +68,14 @@ module.exports = (root, options = {}) => {
 
         return send(req, filePath, {
             maxage: filePath === req.url ? 0 : MAX_AGE,
-            index: options.index || 'index.html',
-            ignore: options.hidden,
-            root
+            ignore: hidden,
+            index,
+            root,
+            ...sendOptions
         });
     }
 
-    function stripVersion(p, shortHash = options.shortHash) {
+    function stripVersion(p) {
         // index.<hash>.js -> index.js
         const fileName = path.basename(p);
         const fileNameParts = fileName.split('.');
@@ -111,7 +115,7 @@ module.exports = (root, options = {}) => {
         const urls = Object.keys(versions);
 
         urls.forEach(url => {
-            fileContents = fileContents.replace(url, getVersionedPath(url, options.shortHash));
+            fileContents = fileContents.replace(url, getVersionedPath(url, shortHash));
         });
 
         return fileContents;

@@ -26,6 +26,7 @@
     "index.js"
   ],
   "dependencies": {
+    "ignore-by-default": "^1.0.1",
     "send": "~0.16.1"
   },
   "devDependencies": {

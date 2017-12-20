@@ -6,49 +6,54 @@ const fs = require('fs');
 const url = require('url');
 const send = require('send');
 
-const MAX_AGE = 1000 * 60 * 60 * 24 * 365; // 1 year
+const staticify = (root, options) => {
+    const MAX_AGE = 1000 * 60 * 60 * 24 * 365; // 1 year
 
-const buildVersionHash = (directory, root, versions, shortHash) => {
+    options = options || {};
+
+    let defaultOptions = {
+        shortHash: options.shortHash || true,
+        sendOptions: options.sendOptions || {}
+    };
+
+    defaultOptions = Object.assign(defaultOptions, options);
+
     // Walks the directory tree, finding files, generating a version hash
-    const files = fs.readdirSync(directory);
+    const buildVersionHash = (directory, root, versions) => {
+        const files = fs.readdirSync(directory);
 
-    root = root || directory;
-    versions = versions || {};
+        root = root || directory;
+        versions = versions || {};
 
-    files.forEach(file => {
-        const filePath = path.posix.join(directory, file);
-        const stat = fs.statSync(filePath);
+        files.forEach(file => {
+            const filePath = path.posix.join(directory, file);
+            const stat = fs.statSync(filePath);
 
-        if (stat.isDirectory()) {
-            buildVersionHash(filePath, root, versions, shortHash); // Whee!
-        } else if (stat.isFile()) {
-            const fileStr = fs.readFileSync(filePath, 'utf8');
-            const hash = crypto.createHash('md5')
-                        .update(fileStr, 'utf8')
-                        .digest('hex');
+            if (stat.isDirectory()) {
+                buildVersionHash(filePath, root, versions); // Whee!
+            } else if (stat.isFile()) {
+                const fileStr = fs.readFileSync(filePath, 'utf8');
+                let hash = crypto.createHash('md5')
+                            .update(fileStr, 'utf8')
+                            .digest('hex');
 
-            if (shortHash) {
-                hash.slice(0, 7);
+                if (defaultOptions.shortHash) {
+                    hash = hash.slice(0, 7);
+                }
+
+                versions[`/${path.posix.relative(root, filePath)}`] = hash;
             }
+        });
 
-            versions[`/${path.posix.relative(root, filePath)}`] = hash;
-        }
-    });
+        return versions;
+    };
 
-    return versions;
-};
-
-module.exports = (root, {shortHash = true, ...sendOptions} = {}) => {
     let versions = buildVersionHash(root);
 
+    // index.js -> index.<hash>.js
     const getVersionedPath = p => {
-        // index.js -> index.<hash>.js
         if (!versions[p]) {
             return p;
-        }
-
-        if (shortHash) {
-            versions[p] = versions[p].slice(0, 7);
         }
 
         const fileName = path.basename(p);
@@ -59,11 +64,11 @@ module.exports = (root, {shortHash = true, ...sendOptions} = {}) => {
         return path.posix.join(path.dirname(p), fileNameParts.join('.'));
     };
 
+    // index.<hash>.js -> index.js
     const stripVersion = p => {
-        // index.<hash>.js -> index.js
         const fileName = path.basename(p);
         const fileNameParts = fileName.split('.');
-        const HASH_LEN = shortHash ? 7 : 32;
+        const HASH_LEN = defaultOptions.shortHash === true ? 7 : 32;
         const re = new RegExp(`^[0-9a-f]{${HASH_LEN}}$`, 'i');
 
         if (fileNameParts.length >= 3 &&
@@ -83,11 +88,10 @@ module.exports = (root, {shortHash = true, ...sendOptions} = {}) => {
     const serve = req => {
         const filePath = stripVersion(url.parse(req.url).pathname);
 
-        return send(req, filePath, {
-            root,
-            maxage: filePath === req.url ? 0 : MAX_AGE,
-            ...sendOptions
-        });
+        defaultOptions.sendOptions.maxAge = filePath === req.url ? 0 : (defaultOptions.sendOptions.maxAge ? defaultOptions.sendOptions.maxAge : MAX_AGE);
+        defaultOptions.sendOptions.root = root;
+
+        return send(req, filePath, defaultOptions.sendOptions);
     };
 
     const middleware = (req, res, next) => {
@@ -125,3 +129,5 @@ module.exports = (root, {shortHash = true, ...sendOptions} = {}) => {
         replacePaths
     };
 };
+
+module.exports = staticify;

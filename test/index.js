@@ -69,7 +69,7 @@ describe('.serve', () => {
 
         it('should serve files without a hash tag', done => {
             http.get('http://localhost:12321/index.js', res => {
-                res.headers['cache-control'].indexOf('max-age=0').should.not.equal(-1);
+                res.headers['cache-control'].includes('max-age=0').should.be.true();
                 res.statusCode.should.equal(200);
                 done();
             });
@@ -77,7 +77,7 @@ describe('.serve', () => {
 
         it('should serve files with a hash tag', done => {
             http.get('http://localhost:12321/index.4e2502b.js', res => {
-                res.headers['cache-control'].indexOf('max-age=31536000').should.not.equal(-1);
+                res.headers['cache-control'].includes('max-age=31536000').should.be.true();
                 res.statusCode.should.equal(200);
                 done();
             });
@@ -106,7 +106,7 @@ describe('.serve', () => {
 
         it('should serve files without a hash tag', done => {
             http.get('http://localhost:12321/index.js', res => {
-                res.headers['cache-control'].indexOf('max-age=0').should.not.equal(-1);
+                res.headers['cache-control'].includes('max-age=0').should.be.true();
                 res.statusCode.should.equal(200);
                 done();
             });
@@ -114,7 +114,7 @@ describe('.serve', () => {
 
         it('should serve files with a hash tag', done => {
             http.get('http://localhost:12321/index.4e2502b01a4c92b0a51b1a5a3271eab6.js', res => {
-                res.headers['cache-control'].indexOf('max-age=31536000').should.not.equal(-1);
+                res.headers['cache-control'].includes('max-age=31536000').should.be.true();
                 res.statusCode.should.equal(200);
                 done();
             });
@@ -123,6 +123,40 @@ describe('.serve', () => {
         it('should 404 correctly', done => {
             http.get('http://localhost:12321/non.existant.file.js', res => {
                 res.statusCode.should.equal(404);
+                done();
+            });
+        });
+    });
+
+    describe('custom serve options', () => {
+        let server;
+        before(done => {
+            server = http.createServer((req, res) => {
+                staticify(dir, {
+                    sendOptions: {
+                        maxAge: 3600 * 1000 // milliseconds
+                    }
+                }).serve(req).pipe(res);
+            });
+            server.listen(12321, done);
+        });
+
+        after(done => {
+            server.close(done);
+        });
+
+        it('should serve files without a hash tag', done => {
+            http.get('http://localhost:12321/index.js', res => {
+                res.headers['cache-control'].includes('max-age=0').should.be.true();
+                res.statusCode.should.equal(200);
+                done();
+            });
+        });
+
+        it('should serve files with a hash tag', done => {
+            http.get('http://localhost:12321/index.4e2502b.js', res => {
+                res.headers['cache-control'].includes('max-age=3600').should.be.true();
+                res.statusCode.should.equal(200);
                 done();
             });
         });
@@ -161,7 +195,7 @@ describe('.replacePaths', () => {
 
         results.should.startWith('body { background: url(\'/index.');
         results.should.endWith('\') }');
-        results.indexOf('index.js').should.equal(-1);
+        results.includes('index.js').should.be.false();
         results.should.match(/index\.[0-9a-f]{7}\.js/i);
     });
 
@@ -170,7 +204,7 @@ describe('.replacePaths', () => {
 
         results.should.startWith('body { background: url(\'/index.');
         results.should.endWith('\') }');
-        results.indexOf('index.js').should.equal(-1);
+        results.includes('index.js').should.be.false();
         results.should.match(/index\.[0-9a-f]{32}\.js/i);
     });
 });

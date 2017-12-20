@@ -36,7 +36,12 @@
   "xo": {
     "space": 4,
     "rules": {
-      "capitalized-comments": "off"
+      "capitalized-comments": "off",
+      "spaced-comment": "off",
+      "func-style": [
+        "error",
+        "expression"
+      ]
     },
     "overrides": [
       {

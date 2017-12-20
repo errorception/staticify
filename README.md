@@ -27,9 +27,9 @@ The version hashes are the md5 of the contents of the static asset. Thus, every 
 
 ## With express.js
 
-```javascript
-var path = require("path");
-var staticify = require("staticify")(path.join(__dirname, "public"));
+```js
+var path = require('path');
+var staticify = require('staticify')(path.join(__dirname, 'public'));
 
 ...
 app.use(staticify.middleware);
@@ -53,9 +53,9 @@ npm install staticify
 
 Initialise the staticify helper with the path of your public directory:
 
-```javascript
-var path = require("path");
-var statificy = require("staticify")(path.join(__dirname, "public"));
+```js
+var path = require('path');
+var statificy = require('staticify')(path.join(__dirname, 'public'));
 ```
 
 This returns an object with the following helpers:
@@ -64,7 +64,7 @@ This returns an object with the following helpers:
 
 Does the following transformation to the `path`, and returns immediately:
 
-```javascript
+```js
 staticify.getVersionedPath('/path/to/file.ext'); // --> /path/to/file.<md5 of the contents of file.ext>.ext
 ```
 
@@ -76,21 +76,21 @@ This method is really fast (simply an in-memory lookup) and returns immediately.
 
 Convenience wrapper over `.serve` to handle static files in express.js.
 
-```javascript
-app.use(staticify.middleware)  // `app` is your express instance
+```js
+app.use(staticify.middleware);  // `app` is your express instance
 ```
 
 ### .replacePaths(string)
 
 Takes the input string, and replaces any paths it can understand. For example:
 
-```javascript
-staticify.replacePaths("body { background: url('/index.js') }");
+```js
+staticify.replacePaths('body { background: url("/index.js") }');
 ```
 
 returns
 
-```javascript
+```js
 "body { background: url('/index.d766c4a983224a3696bc4913b9e47305.js') }"
 ```
 
@@ -100,7 +100,7 @@ Perfect for use in your build script, to modify references to external paths wit
 
 Removes the md5 identifier in a path.
 
-```javascript
+```js
 staticify.stripVersion('/path/to/file.ae2b1fca515949e5d54fb22b8ed95575.ext'); // --> /path/to/file.ext
 ```
 
@@ -112,10 +112,14 @@ Rebuilds the md5 version cache described above. Use this method sparingly. This 
 
 ### .serve(req)
 
-Handles an incoming request for the file. Internally calls `.stripVersion` to strip the version identifier, and serves the file with a `maxage` of a year, using [send](https://github.com/tj/send). Returns a stream that can be `.pipe`d to a http response stream.
+Handles an incoming request for the file. Internally calls `.stripVersion` to strip the version identifier, and serves the file with a `maxAge` of one year, using [send](https://github.com/pillarjs/send). Returns a stream that can be `.pipe`d to a http response stream. See [here](https://github.com/pillarjs/send#options) for the options you can pass.
 
-```javascript
-staticify.serve(req).pipe(res)
+```js
+staticify.serve(req, {
+    sendOptions: {
+        maxAge: 3600 * 1000 // milliseconds
+    }
+}).pipe(res);
 ```
 
 ## License

@@ -5,13 +5,15 @@ const crypto = require('crypto');
 const fs = require('fs');
 const url = require('url');
 const send = require('send');
+const ignoredDirectories = require('ignore-by-default').directories();
 
 const staticify = (root, options) => {
-    const MAX_AGE = 1000 * 60 * 60 * 24 * 365; // 1 year
+    const MAX_AGE = 1000 * 60 * 60 * 24 * 365; // 1 year in milliseconds
 
     options = options || {};
 
     let defaultOptions = {
+        includeAll: options.includeAll || false,
         shortHash: options.shortHash || true,
         sendOptions: options.sendOptions || {}
     };
@@ -20,6 +22,12 @@ const staticify = (root, options) => {
 
     // Walks the directory tree, finding files, generating a version hash
     const buildVersionHash = (directory, root, versions) => {
+        for (let i = 0, len = ignoredDirectories.length; i < len; i++) {
+            if (directory.includes(ignoredDirectories[i]) && opts.includeAll === false) {
+                return;
+            }
+        }
+
         const files = fs.readdirSync(directory);
 
         root = root || directory;

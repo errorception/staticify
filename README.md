@@ -43,6 +43,29 @@ And in your template:
 <link href="${getVersionedPath('/home.css')}" rel="stylesheet">
 ```
 
+## Options
+
+### includeAll
+
+Include all files when scanning the public directory. By default, the directories from [ignore-by-default](https://github.com/novemberborn/ignore-by-default/blob/master/index.js) are ignored.
+
+* Type: Boolean
+* Default: `false`
+
+### shortHash
+
+Generate a short (7-digit) md5 hash instead of the full (32-digit) one.
+
+* Type: Boolean
+* Default: `true`
+
+### sendOptions
+
+* Type: Object
+* Default: `sendOptions: { maxAge: '1y' }` for hashed assets or `maxAge: 0` for non-hashed assets.
+
+You can pass any [send](https://github.com/pillarjs/send) options; used in `middleware` and `serve` functions.
+
 ## Usage
 
 Install from npm:

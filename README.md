@@ -6,7 +6,7 @@
 [![dependencies Status](https://img.shields.io/david/errorception/staticify.svg)](https://david-dm.org/errorception/staticify)
 [![devDependencies Status](https://img.shields.io/david/dev/errorception/staticify.svg)](https://david-dm.org/errorception/staticify?type=dev)
 
-A better static asset handler for node.js / express.js
+A better static asset handler for Node.js / express.js.
 
 Provides helpers to add a version identifier to your static asset's public URLs, and to remove the hash before serving the file from the file system.
 

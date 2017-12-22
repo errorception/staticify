@@ -5,30 +5,31 @@ const path = require('path');
 const should = require('should');
 const staticify = require('../');
 
-const dir = path.join(__dirname, '/../');
+const ROOT = path.join(__dirname, '/../');
 
 describe('constructor', () => {
     it('should build an object of versions', () => {
-        staticify(dir)._versions.should.be.an.Object();
-        Object.keys(staticify(dir)._versions).should.not.equal(0);
+        const versions = staticify(ROOT)._versions;
+        versions.should.be.an.Object();
+        Object.keys(versions).should.not.equal(0);
     });
 });
 
 describe('.stripVersion', () => {
     it('should strip the hash from a path when necessary', () => {
-        staticify(dir).stripVersion(path.normalize('/script.4e2502b.js')).should.equal(path.normalize('/script.js'));
-        staticify(dir).stripVersion(path.normalize('/script.js')).should.equal(path.normalize('/script.js'));
+        staticify(ROOT).stripVersion(path.normalize('/script.4e2502b.js')).should.equal(path.normalize('/script.js'));
+        staticify(ROOT).stripVersion(path.normalize('/script.js')).should.equal(path.normalize('/script.js'));
     });
 
     it('should strip the (long) hash from a path when necessary', () => {
-        staticify(dir, {shortHash: false}).stripVersion(path.normalize('/script.4e2502b01a4c92b0a51b1a5a3271eab6.js')).should.equal(path.normalize('/script.js'));
-        staticify(dir, {shortHash: false}).stripVersion(path.normalize('/script.js')).should.equal(path.normalize('/script.js'));
+        staticify(ROOT, {shortHash: false}).stripVersion(path.normalize('/script.4e2502b01a4c92b0a51b1a5a3271eab6.js')).should.equal(path.normalize('/script.js'));
+        staticify(ROOT, {shortHash: false}).stripVersion(path.normalize('/script.js')).should.equal(path.normalize('/script.js'));
     });
 });
 
 describe('.getVersionedPath', () => {
     it('should add a hash to the path', () => {
-        let versioned = staticify(dir).getVersionedPath('/index.js');
+        let versioned = staticify(ROOT).getVersionedPath('/index.js');
         versioned = versioned.split('.');
         versioned.should.have.a.lengthOf(3);
         versioned[0].should.equal('/index');
@@ -38,7 +39,7 @@ describe('.getVersionedPath', () => {
     });
 
     it('should add a long hash to the path', () => {
-        let versioned = staticify(dir, {shortHash: false}).getVersionedPath('/index.js');
+        let versioned = staticify(ROOT, {shortHash: false}).getVersionedPath('/index.js');
         versioned = versioned.split('.');
         versioned.should.have.a.lengthOf(3);
         versioned[0].should.equal('/index');
@@ -48,7 +49,7 @@ describe('.getVersionedPath', () => {
     });
 
     it('shouldn\'t add a hash if the path isn\'t known', () => {
-        staticify(dir).getVersionedPath('/unknown.js').should.equal('/unknown.js');
+        staticify(ROOT).getVersionedPath('/unknown.js').should.equal('/unknown.js');
     });
 });
 
@@ -58,7 +59,7 @@ describe('.serve', () => {
 
         before(done => {
             server = http.createServer((req, res) => {
-                staticify(dir).serve(req).pipe(res);
+                staticify(ROOT).serve(req).pipe(res);
             });
             server.listen(12321, done);
         });
@@ -95,7 +96,7 @@ describe('.serve', () => {
         let server;
         before(done => {
             server = http.createServer((req, res) => {
-                staticify(dir, {shortHash: false}).serve(req).pipe(res);
+                staticify(ROOT, {shortHash: false}).serve(req).pipe(res);
             });
             server.listen(12321, done);
         });
@@ -132,7 +133,7 @@ describe('.serve', () => {
         let server;
         before(done => {
             server = http.createServer((req, res) => {
-                staticify(dir, {
+                staticify(ROOT, {
                     sendOptions: {
                         maxAge: 3600 * 1000 // milliseconds
                     }
@@ -177,7 +178,7 @@ describe('.middleware', () => {
 
     it('should call next without error if 404', done => {
         server.once('request', (req, res) => {
-            staticify(dir).middleware(req, res, err => {
+            staticify(ROOT).middleware(req, res, err => {
                 should.not.exist(err);
 
                 res.end();
@@ -191,7 +192,7 @@ describe('.middleware', () => {
 
 describe('.replacePaths', () => {
     it('should replace paths in a string', () => {
-        const results = staticify(dir).replacePaths('body { background: url(\'/index.js\') }');
+        const results = staticify(ROOT).replacePaths('body { background: url(\'/index.js\') }');
 
         results.should.startWith('body { background: url(\'/index.');
         results.should.endWith('\') }');
@@ -200,7 +201,7 @@ describe('.replacePaths', () => {
     });
 
     it('should replace paths in a string (long)', () => {
-        const results = staticify(dir, {shortHash: false}).replacePaths('body { background: url(\'/index.js\') }');
+        const results = staticify(ROOT, {shortHash: false}).replacePaths('body { background: url(\'/index.js\') }');
 
         results.should.startWith('body { background: url(\'/index.');
         results.should.endWith('\') }');

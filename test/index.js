@@ -10,8 +10,18 @@ const ROOT = path.join(__dirname, '/../');
 describe('constructor', () => {
     it('should build an object of versions', () => {
         const versions = staticify(ROOT)._versions;
+
         versions.should.be.an.Object();
         Object.keys(versions).should.not.equal(0);
+    });
+});
+
+describe('Options work', () => {
+    it('`ignoreAll: false` works', () => {
+        const versions = staticify(ROOT, {includeAll: true})._versions;
+        const matches = Object.keys(versions).filter(ver => ver.match(/node_modules|\.git/)).length > 0;
+
+        matches.should.be.true();
     });
 });
 
@@ -30,6 +40,7 @@ describe('.stripVersion', () => {
 describe('.getVersionedPath', () => {
     it('should add a hash to the path', () => {
         let versioned = staticify(ROOT).getVersionedPath('/index.js');
+
         versioned = versioned.split('.');
         versioned.should.have.a.lengthOf(3);
         versioned[0].should.equal('/index');
@@ -40,6 +51,7 @@ describe('.getVersionedPath', () => {
 
     it('should add a long hash to the path', () => {
         let versioned = staticify(ROOT, {shortHash: false}).getVersionedPath('/index.js');
+
         versioned = versioned.split('.');
         versioned.should.have.a.lengthOf(3);
         versioned[0].should.equal('/index');
@@ -94,6 +106,7 @@ describe('.serve', () => {
 
     describe('long hash', () => {
         let server;
+
         before(done => {
             server = http.createServer((req, res) => {
                 staticify(ROOT, {shortHash: false}).serve(req).pipe(res);
@@ -131,6 +144,7 @@ describe('.serve', () => {
 
     describe('custom serve options', () => {
         let server;
+
         before(done => {
             server = http.createServer((req, res) => {
                 staticify(ROOT, {

@@ -32,10 +32,8 @@ const staticify = (root, options) => {
         root = root || directory;
         vers = vers || {};
 
-        for (let i = 0, len = ignoredDirectories.length; i < len; i++) {
-            if (directory.includes(ignoredDirectories[i]) && opts.includeAll === false) {
-                return;
-            }
+        if (opts.includeAll === false && ignoredDirectories.some(d => directory.includes(d))) {
+            return;
         }
 
         const files = fs.readdirSync(directory);

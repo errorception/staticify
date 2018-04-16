@@ -10,7 +10,7 @@
     "url": "git+ssh://git@github.com/errorception/staticify.git"
   },
   "scripts": {
-    "mocha": "mocha --reporter spec",
+    "mocha": "mocha",
     "xo": "xo",
     "test": "npm run xo && npm run mocha"
   },
@@ -48,8 +48,7 @@
       {
         "files": "test/**",
         "envs": [
-          "mocha",
-          "node"
+          "mocha"
         ]
       }
     ]

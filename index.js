@@ -47,8 +47,8 @@ const staticify = (root, options) => {
             } else if (stat.isFile()) {
                 const fileStr = fs.readFileSync(filePath, 'utf8');
                 let hash = crypto.createHash('md5')
-                            .update(fileStr, 'utf8')
-                            .digest('hex');
+                    .update(fileStr, 'utf8')
+                    .digest('hex');
 
                 if (opts.shortHash) {
                     hash = hash.slice(0, 7);

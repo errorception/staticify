@@ -3,7 +3,7 @@
 const http = require('http');
 const path = require('path');
 const should = require('should');
-const staticify = require('../');
+const staticify = require('..');
 
 const ROOT = path.join(__dirname, '/../');
 

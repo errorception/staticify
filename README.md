@@ -78,7 +78,7 @@ Initialise the staticify helper with the path of your public directory:
 
 ```js
 var path = require('path');
-var statificy = require('staticify')(path.join(__dirname, 'public'));
+var staticify = require('staticify')(path.join(__dirname, 'public'));
 ```
 
 This returns an object with the following helpers:

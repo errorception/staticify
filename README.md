@@ -59,6 +59,24 @@ Generate a short (7-digit) md5 hash instead of the full (32-digit) one.
 * Type: Boolean
 * Default: `true`
 
+### mwRoute
+
+If you are using the staticify convenience middleware through a specific route, it is necessary to indicate the route in this option.
+
+* Type: String
+* Default: "/"
+
+```js
+// Example
+
+// ...
+var options = { mwRoute: '/assets' }
+var staticify = require('staticify')(path.join(__dirname, 'public'), options);
+
+// ...
+app.use('/assets', staticify.middleware);  // `app` is your express instance
+```
+
 ### sendOptions
 
 * Type: Object

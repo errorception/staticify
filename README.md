@@ -67,13 +67,10 @@ If you are using the staticify convenience middleware through a specific route, 
 * Default: "/"
 
 ```js
-// Example
-
-// ...
-var options = { mwRoute: '/assets' }
+var path = require('path');
+var options = { mwRoute: '/assets' };
 var staticify = require('staticify')(path.join(__dirname, 'public'), options);
 
-// ...
 app.use('/assets', staticify.middleware);  // `app` is your express instance
 ```
 

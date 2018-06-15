@@ -17,7 +17,7 @@ const staticify = (root, options) => {
         let defaultOptions = {
             includeAll: opts.includeAll || false,
             shortHash: opts.shortHash || true,
-            mwRoute: opts.mwRoute || '/',
+            pathPrefix: opts.pathPrefix || '/',
             sendOptions: opts.sendOptions || {}
         };
 
@@ -75,7 +75,7 @@ const staticify = (root, options) => {
 
         fileNameParts.push(versions[p], fileNameParts.pop());
 
-        return path.posix.join(opts.mwRoute, path.dirname(p), fileNameParts.join('.'));
+        return path.posix.join(opts.pathPrefix, path.dirname(p), fileNameParts.join('.'));
     };
 
     // index.<hash>.js -> index.js

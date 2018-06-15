@@ -61,7 +61,7 @@ describe('.getVersionedPath', () => {
     });
 
     it('should add a prefix route to the path', () => {
-        let versioned = staticify(ROOT, {mwRoute: '/prefix'}).getVersionedPath('/index.js');
+        let versioned = staticify(ROOT, {pathPrefix: '/prefix'}).getVersionedPath('/index.js');
 
         versioned = versioned.split('.');
         versioned.should.have.a.lengthOf(3);

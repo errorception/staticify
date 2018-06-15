@@ -60,6 +60,17 @@ describe('.getVersionedPath', () => {
         /^[0-9a-f]{32}$/i.exec(versioned[1])[0].should.equal(versioned[1]);
     });
 
+    it('should add a prefix route to the path', () => {
+        let versioned = staticify(ROOT, {pathPrefix: '/prefix'}).getVersionedPath('/index.js');
+
+        versioned = versioned.split('.');
+        versioned.should.have.a.lengthOf(3);
+        versioned[0].should.equal('/prefix/index');
+        versioned[2].should.equal('js');
+        versioned[1].should.have.a.lengthOf(7);
+        /^[0-9a-f]{7}$/i.exec(versioned[1])[0].should.equal(versioned[1]);
+    });
+
     it('shouldn\'t add a hash if the path isn\'t known', () => {
         staticify(ROOT).getVersionedPath('/unknown.js').should.equal('/unknown.js');
     });

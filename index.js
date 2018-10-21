@@ -6,6 +6,7 @@ const path = require('path');
 const url = require('url');
 
 const ignoredDirectories = require('ignore-by-default').directories();
+const memoizee = require('memoizee');
 const send = require('send');
 
 const staticify = (root, options) => {
@@ -28,6 +29,18 @@ const staticify = (root, options) => {
 
     const opts = setOptions(options);
 
+    const cachedMakeHash = memoizee(filePath => {
+        const fileStr = fs.readFileSync(filePath, 'utf8');
+        let hash = crypto.createHash('md5')
+            .update(fileStr, 'utf8')
+            .digest('hex');
+
+        if (opts.shortHash) {
+            hash = hash.slice(0, 7);
+        }
+        return hash;
+    });
+
     // Walks the directory tree, finding files, generating a version hash
     const buildVersionHash = (directory, root, vers) => {
         root = root || directory;
@@ -40,22 +53,13 @@ const staticify = (root, options) => {
         const files = fs.readdirSync(directory);
 
         files.forEach(file => {
-            const filePath = path.posix.join(directory, file);
-            const stat = fs.statSync(filePath);
+            const absFilePath = path.posix.join(directory, file);
+            const stat = fs.statSync(absFilePath);
 
             if (stat.isDirectory()) {
-                buildVersionHash(filePath, root, vers); // Whee!
+                buildVersionHash(absFilePath, root, vers); // Whee!
             } else if (stat.isFile()) {
-                const fileStr = fs.readFileSync(filePath, 'utf8');
-                let hash = crypto.createHash('md5')
-                    .update(fileStr, 'utf8')
-                    .digest('hex');
-
-                if (opts.shortHash) {
-                    hash = hash.slice(0, 7);
-                }
-
-                vers[`/${path.posix.relative(root, filePath)}`] = hash;
+                vers[`/${path.posix.relative(root, absFilePath)}`] = {absFilePath};
             }
         });
 
@@ -72,8 +76,8 @@ const staticify = (root, options) => {
 
         const fileName = path.basename(p);
         const fileNameParts = fileName.split('.');
-
-        fileNameParts.push(versions[p], fileNameParts.pop());
+        const {absFilePath} = versions[p];
+        fileNameParts.push(cachedMakeHash(absFilePath), fileNameParts.pop());
 
         return path.posix.join(opts.pathPrefix, path.dirname(p), fileNameParts.join('.'));
     };

@@ -31,8 +31,8 @@
   },
   "devDependencies": {
     "mocha": "^5.2.0",
-    "should": "^13.2.1",
-    "xo": "^0.21.1"
+    "should": "^13.2.3",
+    "xo": "^0.23.0"
   },
   "xo": {
     "space": 4,

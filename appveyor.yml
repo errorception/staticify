@@ -1,6 +1,6 @@
-clone_depth: 10
-
 version: "{build}"
+
+clone_depth: 5
 
 environment:
   matrix:
@@ -13,7 +13,8 @@ install:
   - npm install
 
 test_script:
-  - node --version && npm --version
+  - node -v
+  - npm -v
   - npm test
 
 build: off

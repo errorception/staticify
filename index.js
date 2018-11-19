@@ -19,15 +19,21 @@ const staticify = (root, options) => {
             includeAll: opts.includeAll || false,
             shortHash: opts.shortHash || true,
             pathPrefix: opts.pathPrefix || '/',
+            maxAgeNonHashed: opts.maxAgeNonHashed || 0,
             sendOptions: opts.sendOptions || {}
         };
 
         defaultOptions = Object.assign(defaultOptions, opts);
 
+        defaultOptions.sendOptions.root = root;
+        defaultOptions.sendOptions.maxAge = defaultOptions.sendOptions.maxAge || MAX_AGE;
+
         return defaultOptions;
     };
 
     const opts = setOptions(options);
+    const sendOptsNonVersioned = Object.assign({}, opts.sendOptions);
+    sendOptsNonVersioned.maxAge = opts.maxAgeNonHashed;
 
     const cachedMakeHash = memoizee(filePath => {
         const fileStr = fs.readFileSync(filePath, 'utf8');
@@ -106,11 +112,9 @@ const staticify = (root, options) => {
 
     const serve = req => {
         const filePath = stripVersion(url.parse(req.url).pathname);
+        const sendOpts = (filePath === req.url ? sendOptsNonVersioned : opts.sendOptions);
 
-        opts.sendOptions.maxAge = filePath === req.url ? 0 : (opts.sendOptions.maxAge ? opts.sendOptions.maxAge : MAX_AGE);
-        opts.sendOptions.root = root;
-
-        return send(req, filePath, opts.sendOptions);
+        return send(req, filePath, sendOpts);
     };
 
     const middleware = (req, res, next) => {

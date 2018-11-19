@@ -32,7 +32,7 @@ The version hashes are the md5 of the contents of the static asset. Thus, every 
 var path = require('path');
 var staticify = require('staticify')(path.join(__dirname, 'public'));
 
-...
+// ...
 app.use(staticify.middleware);
 
 app.helpers({getVersionedPath: staticify.getVersionedPath});
@@ -45,6 +45,12 @@ And in your template:
 ```
 
 ## Options
+
+Options are specified as the second parameter to `staticify`:
+
+```js
+var staticify = require('staticify')(path.join(__dirname, 'public'), options);
+```
 
 ### includeAll
 
@@ -75,6 +81,15 @@ var staticify = require('staticify')(path.join(__dirname, 'public'), options);
 app.use('/assets', staticify.middleware);  // `app` is your express instance
 ```
 
+### maxAgeNonHashed
+
+* Type: String | Number
+* Default: `0`
+
+`maxAge` for assets without a hash such as `/image.png` passed to [send](https://github.com/pillarjs/send).
+
+Can be defined as a number of milliseconds or string accepted by [ms](https://www.npmjs.org/package/ms#readme) module (eg. `'5d'`, `'1y'`, etc.)
+
 ### sendOptions
 
 * Type: Object
@@ -86,11 +101,11 @@ You can pass any [send](https://github.com/pillarjs/send) options; used in `midd
 
 Install from npm:
 
-```
+```sh
 npm install staticify
 ```
 
-Initialise the staticify helper with the path of your public directory:
+Initialize the staticify helper with the path of your public directory:
 
 ```js
 var path = require('path');

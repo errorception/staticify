@@ -10,9 +10,11 @@
     "url": "git+ssh://git@github.com/errorception/staticify.git"
   },
   "scripts": {
+    "coveralls": "nyc report --reporter=text-lcov | coveralls",
     "mocha": "mocha",
     "xo": "xo",
-    "test": "npm run xo && npm run mocha"
+    "test": "npm run xo && npm run mocha",
+    "test:cov": "nyc npm run test"
   },
   "keywords": [
     "static",
@@ -31,9 +33,14 @@
     "send": "^0.16.2"
   },
   "devDependencies": {
+    "coveralls": "^3.0.2",
     "mocha": "^5.2.0",
+    "nyc": "^13.1.0",
     "should": "^13.2.3",
     "xo": "^0.23.0"
+  },
+  "engines": {
+    "node": ">=6"
   },
   "xo": {
     "space": 4,
@@ -54,7 +61,10 @@
       }
     ]
   },
-  "engines": {
-    "node": ">=6"
+  "nyc": {
+    "reporter": [
+      "html",
+      "text-summary"
+    ]
   }
 }

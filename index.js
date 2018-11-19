@@ -11,6 +11,7 @@ const send = require('send');
 
 const staticify = (root, options) => {
     const MAX_AGE = 1000 * 60 * 60 * 24 * 365; // 1 year in milliseconds
+    let sendOptsNonVersioned;
 
     const setOptions = opts => {
         opts = opts || {};
@@ -28,12 +29,13 @@ const staticify = (root, options) => {
         defaultOptions.sendOptions.root = root;
         defaultOptions.sendOptions.maxAge = defaultOptions.sendOptions.maxAge || MAX_AGE;
 
+        sendOptsNonVersioned = Object.assign({}, defaultOptions.sendOptions);
+        sendOptsNonVersioned.maxAge = defaultOptions.maxAgeNonHashed;
+
         return defaultOptions;
     };
 
     const opts = setOptions(options);
-    const sendOptsNonVersioned = Object.assign({}, opts.sendOptions);
-    sendOptsNonVersioned.maxAge = opts.maxAgeNonHashed;
 
     const cachedMakeHash = memoizee(filePath => {
         const fileStr = fs.readFileSync(filePath, 'utf8');

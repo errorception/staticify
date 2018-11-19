@@ -112,7 +112,7 @@ const staticify = (root, options) => {
 
     const serve = req => {
         const filePath = stripVersion(url.parse(req.url).pathname);
-        const sendOpts = (filePath === req.url ? sendOptsNonVersioned : opts.sendOptions);
+        const sendOpts = filePath === req.url ? sendOptsNonVersioned : opts.sendOptions;
 
         return send(req, filePath, sendOpts);
     };

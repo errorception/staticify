@@ -11,6 +11,7 @@ const send = require('send');
 
 const staticify = (root, options) => {
     const MAX_AGE = 1000 * 60 * 60 * 24 * 365; // 1 year in milliseconds
+    let sendOptsNonVersioned;
 
     const setOptions = opts => {
         opts = opts || {};
@@ -19,10 +20,17 @@ const staticify = (root, options) => {
             includeAll: opts.includeAll || false,
             shortHash: opts.shortHash || true,
             pathPrefix: opts.pathPrefix || '/',
+            maxAgeNonHashed: opts.maxAgeNonHashed || 0,
             sendOptions: opts.sendOptions || {}
         };
 
         defaultOptions = Object.assign(defaultOptions, opts);
+
+        defaultOptions.sendOptions.root = root;
+        defaultOptions.sendOptions.maxAge = defaultOptions.sendOptions.maxAge || MAX_AGE;
+
+        sendOptsNonVersioned = Object.assign({}, defaultOptions.sendOptions);
+        sendOptsNonVersioned.maxAge = defaultOptions.maxAgeNonHashed;
 
         return defaultOptions;
     };
@@ -106,11 +114,9 @@ const staticify = (root, options) => {
 
     const serve = req => {
         const filePath = stripVersion(url.parse(req.url).pathname);
+        const sendOpts = filePath === req.url ? sendOptsNonVersioned : opts.sendOptions;
 
-        opts.sendOptions.maxAge = filePath === req.url ? 0 : (opts.sendOptions.maxAge ? opts.sendOptions.maxAge : MAX_AGE);
-        opts.sendOptions.root = root;
-
-        return send(req, filePath, opts.sendOptions);
+        return send(req, filePath, sendOpts);
     };
 
     const middleware = (req, res, next) => {

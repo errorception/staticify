@@ -81,8 +81,9 @@ describe('.serve', () => {
         let server;
 
         before(done => {
+            const staticifyObj = staticify(ROOT);
             server = http.createServer((req, res) => {
-                staticify(ROOT).serve(req).pipe(res);
+                staticifyObj.serve(req).pipe(res);
             });
             server.listen(12321, done);
         });
@@ -119,8 +120,9 @@ describe('.serve', () => {
         let server;
 
         before(done => {
+            const staticifyObj = staticify(ROOT, {shortHash: false});
             server = http.createServer((req, res) => {
-                staticify(ROOT, {shortHash: false}).serve(req).pipe(res);
+                staticifyObj.serve(req).pipe(res);
             });
             server.listen(12321, done);
         });
@@ -157,12 +159,14 @@ describe('.serve', () => {
         let server;
 
         before(done => {
+            const staticifyObj = staticify(ROOT, {
+                maxAgeNonHashed: 7200 * 1000,
+                sendOptions: {
+                    maxAge: 3600 * 1000 // milliseconds
+                }
+            });
             server = http.createServer((req, res) => {
-                staticify(ROOT, {
-                    sendOptions: {
-                        maxAge: 3600 * 1000 // milliseconds
-                    }
-                }).serve(req).pipe(res);
+                staticifyObj.serve(req).pipe(res);
             });
             server.listen(12321, done);
         });
@@ -173,7 +177,7 @@ describe('.serve', () => {
 
         it('should serve files without a hash tag', done => {
             http.get('http://localhost:12321/index.js', res => {
-                res.headers['cache-control'].includes('max-age=0').should.be.true();
+                res.headers['cache-control'].includes('max-age=7200').should.be.true();
                 res.statusCode.should.equal(200);
                 done();
             });

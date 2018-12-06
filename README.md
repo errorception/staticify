@@ -1,8 +1,7 @@
 # staticify
 
 [![NPM version](https://img.shields.io/npm/v/staticify.svg)](https://www.npmjs.com/package/staticify)
-[![Linux Build Status](https://img.shields.io/travis/errorception/staticify/master.svg?label=Linux%20build)](https://travis-ci.org/errorception/staticify)
-[![Windows Build status](https://img.shields.io/appveyor/ci/rakeshpai/staticify/master.svg?label=Windows%20build)](https://ci.appveyor.com/project/rakeshpai/staticify/branch/master)
+[![Build Status](https://img.shields.io/travis/errorception/staticify/master.svg?label=Build%20Status)](https://travis-ci.org/errorception/staticify)
 [![Coverage Status](https://img.shields.io/coveralls/github/errorception/staticify/master.svg)](https://coveralls.io/github/errorception/staticify?branch=master)
 [![dependencies Status](https://img.shields.io/david/errorception/staticify.svg)](https://david-dm.org/errorception/staticify)
 [![devDependencies Status](https://img.shields.io/david/dev/errorception/staticify.svg)](https://david-dm.org/errorception/staticify?type=dev)

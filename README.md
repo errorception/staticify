@@ -14,7 +14,7 @@ Provides helpers to add a version identifier to your static asset's public URLs,
 How your URLs are transformed:
 
 ```
-/home.css --> /home.<md5 hash of contents>.css
+/home.css --> /home.<MD5 hash of contents>.css
 ```
 
 For example:
@@ -24,13 +24,13 @@ For example:
 /js/script.js --> /js/script.3205c0ded576131ea255ad2bd38b0fb2.js
 ```
 
-The version hashes are the md5 of the contents of the static asset. Thus, every file has it's own unique version identifier. When a file changes, only it's own hash changes. This lets you have a far-futures expires header for your static assets without worrying about cache-invalidation, while ensuring that the user only downloads the files that have changed since your last deployment.
+The version hashes are the MD5 of the contents of the static asset. Thus, every file has it's own unique version identifier. When a file changes, only it's own hash changes. This lets you have a far-futures expires header for your static assets without worrying about cache-invalidation, while ensuring that the user only downloads the files that have changed since your last deployment.
 
 ## With express.js
 
 ```js
-var path = require('path');
-var staticify = require('staticify')(path.join(__dirname, 'public'));
+const path = require('path');
+const staticify = require('staticify')(path.join(__dirname, 'public'));
 
 // ...
 app.use(staticify.middleware);
@@ -49,7 +49,7 @@ And in your template:
 Options are specified as the second parameter to `staticify`:
 
 ```js
-var staticify = require('staticify')(path.join(__dirname, 'public'), options);
+const staticify = require('staticify')(path.join(__dirname, 'public'), options);
 ```
 
 ### includeAll
@@ -61,7 +61,7 @@ Include all files when scanning the public directory. By default, the directorie
 
 ### shortHash
 
-Generate a short (7-digit) md5 hash instead of the full (32-digit) one.
+Generate a short (7-digit) MD5 hash instead of the full (32-digit) one.
 
 * Type: Boolean
 * Default: `true`
@@ -74,9 +74,9 @@ If you are using the staticify convenience middleware through a specific route, 
 * Default: "/"
 
 ```js
-var path = require('path');
-var options = { pathPrefix: '/assets' };
-var staticify = require('staticify')(path.join(__dirname, 'public'), options);
+const path = require('path');
+const options = { pathPrefix: '/assets' };
+const staticify = require('staticify')(path.join(__dirname, 'public'), options);
 
 app.use('/assets', staticify.middleware);  // `app` is your express instance
 ```
@@ -108,8 +108,8 @@ npm install staticify
 Initialize the staticify helper with the path of your public directory:
 
 ```js
-var path = require('path');
-var staticify = require('staticify')(path.join(__dirname, 'public'));
+const path = require('path');
+const staticify = require('staticify')(path.join(__dirname, 'public'));
 ```
 
 This returns an object with the following helpers:
@@ -119,12 +119,12 @@ This returns an object with the following helpers:
 Does the following transformation to the `path`, and returns immediately:
 
 ```js
-staticify.getVersionedPath('/path/to/file.ext'); // --> /path/to/file.<md5 of the contents of file.ext>.ext
+staticify.getVersionedPath('/path/to/file.ext'); // --> /path/to/file.<MD5 of the contents of file.ext>.ext
 ```
 
 This method is meant to be used inside your templates.
 
-This method is really fast (simply an in-memory lookup) and returns immediately. When you initialize this module, it crawls your public folder synchronously at startup, and pre-determines all the md5 hashes for your static files. This slows down application startup slightly, but it keeps the runtime performance at its peak.
+This method is really fast (simply an in-memory lookup) and returns immediately. When you initialize this module, it crawls your public folder synchronously at startup, and pre-determines all the MD5 hashes for your static files. This slows down application startup slightly, but it keeps the runtime performance at its peak.
 
 ### .middleware(req, res, next)
 
@@ -152,7 +152,7 @@ Perfect for use in your build script, to modify references to external paths wit
 
 ### .stripVersion(path)
 
-Removes the md5 identifier in a path.
+Removes the MD5 identifier in a path.
 
 ```js
 staticify.stripVersion('/path/to/file.ae2b1fca515949e5d54fb22b8ed95575.ext'); // --> /path/to/file.ext
@@ -162,7 +162,7 @@ Note, this function doesn't verify that the hash is valid. It simply finds what 
 
 ### .refresh()
 
-Rebuilds the md5 version cache described above. Use this method sparingly. This crawls your public folder synchronously (in a blocking fashion) to rebuild the cache. This is typically only useful when you are doing some kind of live-reloading during development.
+Rebuilds the MD5 version cache described above. Use this method sparingly. This crawls your public folder synchronously (in a blocking fashion) to rebuild the cache. This is typically only useful when you are doing some kind of live-reloading during development.
 
 ### .serve(req)
 

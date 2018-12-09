@@ -237,4 +237,38 @@ describe('.replacePaths', () => {
         results.includes('index.js').should.be.false();
         results.should.match(/index\.[0-9a-f]{32}\.js/i);
     });
+
+    it('should replace all paths, not just the first instance of a path', () => {
+        const results = staticify(ROOT).replacePaths('/test/font.woff;/test/font.woff');
+
+        const lines = results.split(';');
+        lines[0].should.match(/test\/font\.[0-9a-f]{7}\.woff/i);
+        lines[1].should.match(/test\/font\.[0-9a-f]{7}\.woff/i);
+        lines[0].should.equal(lines[1]);
+        results.includes('test/font.woff').should.be.false();
+    });
+
+    it('should not mix up paths that are substrings of one another', () => {
+        const results = staticify(ROOT).replacePaths('/test/font.woff;/test/font.woff2;/test/font.woff');
+
+        const lines = results.split(';');
+        lines[0].should.equal(lines[2]);
+        lines[1].should.not.equal(lines[2]);
+        lines[0].should.match(/test\/font\.[0-9a-f]{7}\.woff/i);
+        lines[1].should.match(/test\/font\.[0-9a-f]{7}\.woff2/i);
+        results.includes('test/font.woff').should.be.false();
+        results.includes('test/font.woff2').should.be.false();
+    });
+
+    it('should not mix up paths that are substrings of one another (long)', () => {
+        const results = staticify(ROOT, {shortHash: false}).replacePaths('/test/font.woff;/test/font.woff2;/test/font.woff');
+
+        const lines = results.split(';');
+        lines[0].should.equal(lines[2]);
+        lines[1].should.not.equal(lines[2]);
+        lines[0].should.match(/test\/font\.[0-9a-f]{32}\.woff/i);
+        lines[1].should.match(/test\/font\.[0-9a-f]{32}\.woff2/i);
+        results.includes('test/font.woff').should.be.false();
+        results.includes('test/font.woff2').should.be.false();
+    });
 });

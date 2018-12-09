@@ -135,8 +135,10 @@ const staticify = (root, options) => {
     };
 
     const replacePaths = fileContents => {
-        return Object.keys(versions).reduce((f, url) => {
-            return f.replace(url, getVersionedPath(url));
+        return Object.keys(versions).sort((a, b) => {
+            return b.length - a.length;
+        }).reduce((f, url) => {
+            return f.replace(new RegExp(url, 'g'), getVersionedPath(url));
         }, fileContents);
     };
 

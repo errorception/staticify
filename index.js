@@ -13,9 +13,7 @@ const staticify = (root, options) => {
     const MAX_AGE = 1000 * 60 * 60 * 24 * 365; // 1 year in milliseconds
     let sendOptsNonVersioned;
 
-    const setOptions = opts => {
-        opts = opts || {};
-
+    const setOptions = (opts = {}) => {
         let defaultOptions = {
             includeAll: opts.includeAll || false,
             shortHash: opts.shortHash || true,
@@ -46,14 +44,12 @@ const staticify = (root, options) => {
         if (opts.shortHash) {
             hash = hash.slice(0, 7);
         }
+
         return hash;
     });
 
     // Walks the directory tree, finding files, generating a version hash
-    const buildVersionHash = (directory, root, vers) => {
-        root = root || directory;
-        vers = vers || {};
-
+    const buildVersionHash = (directory, root = directory, vers = {}) => {
         if (opts.includeAll === false && ignoredDirectories.some(d => directory.includes(d))) {
             return;
         }
@@ -113,6 +109,7 @@ const staticify = (root, options) => {
     };
 
     const serve = req => {
+        // eslint-disable-next-line node/no-deprecated-api
         const filePath = stripVersion(url.parse(req.url).pathname);
         const sendOpts = filePath === req.url ? sendOptsNonVersioned : opts.sendOptions;
 
@@ -129,6 +126,7 @@ const staticify = (root, options) => {
                 if (err.status === 404) {
                     return next();
                 }
+
                 return next(err);
             })
             .pipe(res);

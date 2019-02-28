@@ -8,6 +8,9 @@ node_js:
   - "8"
   - "10"
 
+install:
+  - npm install
+
 script:
   - npm run test:cov
 

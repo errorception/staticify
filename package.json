@@ -11,7 +11,7 @@
   },
   "scripts": {
     "coveralls": "nyc report --reporter=text-lcov | coveralls",
-    "mocha": "mocha",
+    "mocha": "mocha --exit",
     "xo": "xo",
     "test": "npm run xo && npm run mocha",
     "test:cov": "nyc npm run test"
@@ -33,11 +33,11 @@
     "send": "^0.16.2"
   },
   "devDependencies": {
-    "coveralls": "^3.0.2",
-    "mocha": "^5.2.0",
-    "nyc": "^13.1.0",
+    "coveralls": "^3.0.3",
+    "mocha": "^6.0.2",
+    "nyc": "^13.3.0",
     "should": "^13.2.3",
-    "xo": "^0.23.0"
+    "xo": "^0.24.0"
   },
   "engines": {
     "node": ">=6"

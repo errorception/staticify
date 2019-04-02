@@ -279,10 +279,9 @@ describe('.refresh', () => {
         fs.writeFileSync(path.join(__dirname, 'variable_file.txt'), 'File Content 1');
 
         const staticifyObj = staticify(ROOT);
-
         const versionedPath = staticifyObj.getVersionedPath('/test/variable_file.txt');
-
         const versioned = versionedPath.split('.');
+
         versioned.should.have.a.lengthOf(3);
         versioned[0].should.equal('/test/variable_file');
         versioned[2].should.equal('txt');

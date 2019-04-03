@@ -141,6 +141,7 @@ const staticify = (root, options) => {
     };
 
     const refresh = () => {
+        cachedMakeHash.clear();
         versions = buildVersionHash(root);
     };
 

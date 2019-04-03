@@ -1,5 +1,6 @@
 'use strict';
 
+const fs = require('fs');
 const http = require('http');
 const path = require('path');
 const should = require('should');
@@ -270,5 +271,28 @@ describe('.replacePaths', () => {
         lines[1].should.match(/test\/font\.[0-9a-f]{32}\.woff2/i);
         results.includes('test/font.woff').should.be.false();
         results.includes('test/font.woff2').should.be.false();
+    });
+});
+
+describe('.refresh', () => {
+    it('should empty the cache of file hashes after a refresh()', () => {
+        fs.writeFileSync(path.join(__dirname, 'variable_file.txt'), 'File Content 1');
+
+        const staticifyObj = staticify(ROOT);
+        const versionedPath = staticifyObj.getVersionedPath('/test/variable_file.txt');
+        const versioned = versionedPath.split('.');
+
+        versioned.should.have.a.lengthOf(3);
+        versioned[0].should.equal('/test/variable_file');
+        versioned[2].should.equal('txt');
+
+        staticifyObj.refresh();
+
+        fs.writeFileSync(path.join(__dirname, 'variable_file.txt'), 'File Content 2');
+
+        const versionedPath2 = staticifyObj.getVersionedPath('/test/variable_file.txt');
+
+        versionedPath2.should.have.a.lengthOf(31);
+        versionedPath2.should.not.equal(versionedPath);
     });
 });

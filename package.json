@@ -1,6 +1,6 @@
 {
   "name": "staticify",
-  "version": "3.3.0",
+  "version": "3.3.1",
   "description": "A better static asset handler for Node.js/Express.js",
   "main": "index.js",
   "author": "Rakesh Pai <rakeshpai@errorception.com>",

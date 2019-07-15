@@ -30,12 +30,12 @@
   "dependencies": {
     "ignore-by-default": "^1.0.1",
     "memoizee": "^0.4.14",
-    "send": "^0.16.2"
+    "send": "^0.17.1"
   },
   "devDependencies": {
-    "coveralls": "^3.0.3",
+    "coveralls": "^3.0.5",
     "mocha": "^6.1.4",
-    "nyc": "^14.0.0",
+    "nyc": "^14.1.1",
     "should": "^13.2.3",
     "xo": "^0.24.0"
   },

@@ -32,9 +32,17 @@ describe('.stripVersion', () => {
         staticify(ROOT).stripVersion(path.normalize('/script.js')).should.equal(path.normalize('/script.js'));
     });
 
+    it('should not fail when the path contains a 7 character string that is not a hash', () => {
+        staticify(ROOT).stripVersion(path.normalize('/script.abcdefg.html')).should.equal(path.normalize('/script.abcdefg.html'));
+    });
+
     it('should strip the (long) hash from a path when necessary', () => {
         staticify(ROOT, {shortHash: false}).stripVersion(path.normalize('/script.4e2502b01a4c92b0a51b1a5a3271eab6.js')).should.equal(path.normalize('/script.js'));
         staticify(ROOT, {shortHash: false}).stripVersion(path.normalize('/script.js')).should.equal(path.normalize('/script.js'));
+    });
+
+    it('should not fail when the path contains a 32 character string that is not a hash', () => {
+        staticify(ROOT).stripVersion(path.normalize('/script.abcdefgabcdefgabcdefgabcdefgabcd.html')).should.equal(path.normalize('/script.abcdefgabcdefgabcdefgabcdefgabcd.html'));
     });
 });
 

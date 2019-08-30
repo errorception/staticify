@@ -96,8 +96,7 @@ const staticify = (root, options) => {
         const re = new RegExp(`^[0-9a-f]{${HASH_LEN}}$`, 'i');
         const reResult = re.exec(fileNameHash);
 
-        if (fileNameParts.length >= 3 &&
-            fileNameHash.length === HASH_LEN &&
+        if (fileNameParts.length >= 3 && fileNameHash.length === HASH_LEN &&
             (reResult && reResult[0] === fileNameHash)
         ) {
             const stripped = fileNameParts.slice(0, fileNameParts.length - 2);

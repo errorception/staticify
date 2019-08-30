@@ -92,14 +92,15 @@ const staticify = (root, options) => {
 
         const fileName = path.basename(p);
         const fileNameParts = fileName.split('.');
-        const fileNameHash = fileNameParts[fileNameParts.length - 2];
+        const fileNameHashPosition = fileNameParts.length - 2;
+        const fileNameHash = fileNameParts[fileNameHashPosition];
         const re = new RegExp(`^[0-9a-f]{${HASH_LEN}}$`, 'i');
         const reResult = re.exec(fileNameHash);
 
         if (fileNameParts.length >= 3 && fileNameHash.length === HASH_LEN &&
             (reResult && reResult[0] === fileNameHash)
         ) {
-            const stripped = fileNameParts.slice(0, fileNameParts.length - 2);
+            const stripped = fileNameParts.slice(0, fileNameHashPosition);
 
             stripped.push(fileNameParts[fileNameParts.length - 1]);
 

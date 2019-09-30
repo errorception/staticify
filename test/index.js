@@ -18,7 +18,14 @@ describe('constructor', () => {
 });
 
 describe('Options work', () => {
-    it('`ignoreAll: false` works', () => {
+    it('`includeAll: false` works', () => {
+        const versions = staticify(ROOT)._versions;
+        const matches = Object.keys(versions).filter(ver => ver.match(/node_modules|\.git/)).length === 0;
+
+        matches.should.be.false();
+    });
+
+    it('`includeAll: true` works', () => {
         const versions = staticify(ROOT, {includeAll: true})._versions;
         const matches = Object.keys(versions).filter(ver => ver.match(/node_modules|\.git/)).length > 0;
 

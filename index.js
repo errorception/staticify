@@ -27,7 +27,7 @@ const staticify = (root, options) => {
         defaultOptions.sendOptions.root = root;
         defaultOptions.sendOptions.maxAge = defaultOptions.sendOptions.maxAge || MAX_AGE;
 
-        sendOptsNonVersioned = Object.assign({}, defaultOptions.sendOptions);
+        sendOptsNonVersioned = {...defaultOptions.sendOptions};
         sendOptsNonVersioned.maxAge = defaultOptions.maxAgeNonHashed;
 
         return defaultOptions;

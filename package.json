@@ -34,13 +34,13 @@
   },
   "devDependencies": {
     "coveralls": "^3.0.6",
-    "mocha": "^6.2.0",
+    "mocha": "^6.2.1",
     "nyc": "^14.1.1",
     "should": "^13.2.3",
-    "xo": "^0.24.0"
+    "xo": "^0.25.3"
   },
   "engines": {
-    "node": ">=6"
+    "node": ">=8"
   },
   "xo": {
     "space": 4,

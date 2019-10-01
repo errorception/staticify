@@ -10,7 +10,6 @@
     "url": "git+ssh://git@github.com/errorception/staticify.git"
   },
   "scripts": {
-    "coveralls": "nyc report --reporter=text-lcov | coveralls",
     "mocha": "mocha --exit",
     "xo": "xo",
     "test": "npm run xo && npm run mocha",
@@ -33,7 +32,6 @@
     "send": "^0.17.1"
   },
   "devDependencies": {
-    "coveralls": "^3.0.6",
     "mocha": "^6.2.1",
     "nyc": "^14.1.1",
     "should": "^13.2.3",
@@ -64,6 +62,7 @@
   "nyc": {
     "reporter": [
       "html",
+      "lcov",
       "text-summary"
     ]
   }

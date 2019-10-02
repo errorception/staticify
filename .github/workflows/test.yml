@@ -38,8 +38,7 @@ jobs:
         if: startsWith(matrix.os, 'windows')
 
       - name: Run Coveralls
-        run: npm run coveralls
-        if: matrix.node == 10 && startsWith(matrix.os, 'ubuntu') && github.repository == 'errorception/staticify' && github.event_name == 'push'
-        env:
-          COVERALLS_REPO_TOKEN: "${{ secrets.COVERALLS_REPO_TOKEN }}"
-          COVERALLS_GIT_BRANCH: "${{ github.ref }}"
+        uses: coverallsapp/github-action@master
+        if: matrix.node == 10 && startsWith(matrix.os, 'ubuntu')
+        with:
+          github-token: "${{ secrets.GITHUB_TOKEN }}"

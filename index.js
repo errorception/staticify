@@ -9,8 +9,11 @@ const ignoredDirectories = require('ignore-by-default').directories();
 const memoizee = require('memoizee');
 const send = require('send');
 
+const MAX_AGE = 1000 * 60 * 60 * 24 * 365; // 1 year in milliseconds
+const SHORT_LEN = 7;
+const LONG_LEN = 32;
+
 const staticify = (root, options) => {
-    const MAX_AGE = 1000 * 60 * 60 * 24 * 365; // 1 year in milliseconds
     let sendOptsNonVersioned;
 
     const setOptions = (opts = {}) => {
@@ -42,7 +45,7 @@ const staticify = (root, options) => {
             .digest('hex');
 
         if (opts.shortHash) {
-            hash = hash.slice(0, 7);
+            hash = hash.slice(0, SHORT_LEN);
         }
 
         return hash;
@@ -88,7 +91,7 @@ const staticify = (root, options) => {
 
     // index.<hash>.js -> index.js
     const stripVersion = p => {
-        const HASH_LEN = opts.shortHash === true ? 7 : 32;
+        const HASH_LEN = opts.shortHash === true ? SHORT_LEN : LONG_LEN;
 
         const fileName = path.basename(p);
         const fileNameParts = fileName.split('.');

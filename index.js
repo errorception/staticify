@@ -6,7 +6,6 @@ const path = require('path');
 const url = require('url');
 
 const ignoredDirectories = require('ignore-by-default').directories();
-const memoizee = require('memoizee');
 const send = require('send');
 
 const MAX_AGE = 1000 * 60 * 60 * 24 * 365; // 1 year in milliseconds
@@ -15,6 +14,8 @@ const LONG_LEN = 32;
 
 const staticify = (root, options) => {
     let sendOptsNonVersioned;
+
+    const hashCache = new Set();
 
     const setOptions = (opts = {}) => {
         let defaultOptions = {
@@ -38,7 +39,11 @@ const staticify = (root, options) => {
 
     const opts = setOptions(options);
 
-    const cachedMakeHash = memoizee(filePath => {
+    const getHash = filePath => {
+        if (hashCache.has(filePath)) {
+            return;
+        }
+
         const fileStr = fs.readFileSync(filePath, 'utf8');
         let hash = crypto.createHash('md5')
             .update(fileStr, 'utf8')
@@ -49,7 +54,9 @@ const staticify = (root, options) => {
         }
 
         return hash;
-    });
+    };
+
+    hashCache.add(getHash);
 
     // Walks the directory tree, finding files, generating a version hash
     const buildVersionHash = (directory, root = directory, vers = {}) => {
@@ -84,7 +91,7 @@ const staticify = (root, options) => {
         const fileName = path.basename(p);
         const fileNameParts = fileName.split('.');
         const {absFilePath} = versions[p];
-        fileNameParts.push(cachedMakeHash(absFilePath), fileNameParts.pop());
+        fileNameParts.push(getHash(absFilePath), fileNameParts.pop());
 
         return path.posix.join(opts.pathPrefix, path.dirname(p), fileNameParts.join('.'));
     };
@@ -146,7 +153,7 @@ const staticify = (root, options) => {
     };
 
     const refresh = () => {
-        cachedMakeHash.clear();
+        hashCache.clear();
         versions = buildVersionHash(root);
     };
 

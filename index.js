@@ -126,7 +126,7 @@ const staticify = (root, options) => {
             return next();
         }
 
-        serve(req, res)
+        serve(req)
             .on('error', err => {
                 if (err.status === 404) {
                     return next();

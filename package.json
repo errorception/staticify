@@ -3,6 +3,7 @@
   "version": "3.3.4",
   "description": "A better static asset handler for Node.js/Express.js",
   "main": "index.js",
+  "types": "index.d.ts",
   "author": "Rakesh Pai <rakeshpai@errorception.com>",
   "license": "MIT",
   "repository": {

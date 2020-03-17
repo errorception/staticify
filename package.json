@@ -35,7 +35,7 @@
     "mocha": "^7.1.0",
     "nyc": "^15.0.0",
     "should": "^13.2.3",
-    "xo": "^0.27.2"
+    "xo": "^0.28.0"
   },
   "engines": {
     "node": ">=10"
@@ -48,7 +48,10 @@
       "func-style": [
         "error",
         "expression"
-      ]
+      ],
+      "unicorn/better-regex": "off",
+      "unicorn/prevent-abbreviations": "off",
+      "unicorn/string-content": "off"
     },
     "overrides": [
       {

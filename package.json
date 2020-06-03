@@ -50,8 +50,7 @@
         "expression"
       ],
       "unicorn/better-regex": "off",
-      "unicorn/prevent-abbreviations": "off",
-      "unicorn/string-content": "off"
+      "unicorn/prevent-abbreviations": "off"
     },
     "overrides": [
       {

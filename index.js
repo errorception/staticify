@@ -66,7 +66,12 @@ const staticify = (root, options) => {
             if (stat.isDirectory()) {
                 buildVersionHash(absFilePath, root, vers); // Whee!
             } else if (stat.isFile()) {
-                vers[`/${path.posix.relative(root, absFilePath)}`] = {absFilePath};
+                const p = `/${path.posix.relative(root, absFilePath)}`;
+                const fileName = path.basename(p);
+                const fileNameParts = fileName.split('.');
+                fileNameParts.push(cachedMakeHash(absFilePath), fileNameParts.pop());
+                const versionedPath = path.posix.join(opts.pathPrefix, path.dirname(p), fileNameParts.join('.'));
+                vers[p] = {absFilePath, versionedPath};
             }
         });
 
@@ -76,18 +81,7 @@ const staticify = (root, options) => {
     let versions = buildVersionHash(root);
 
     // index.js -> index.<hash>.js
-    const getVersionedPath = p => {
-        if (!versions[p]) {
-            return p;
-        }
-
-        const fileName = path.basename(p);
-        const fileNameParts = fileName.split('.');
-        const {absFilePath} = versions[p];
-        fileNameParts.push(cachedMakeHash(absFilePath), fileNameParts.pop());
-
-        return path.posix.join(opts.pathPrefix, path.dirname(p), fileNameParts.join('.'));
-    };
+    const getVersionedPath = p => versions[p] ? versions[p].versionedPath : p;
 
     // index.<hash>.js -> index.js
     const stripVersion = p => {
@@ -115,8 +109,10 @@ const staticify = (root, options) => {
 
     const serve = req => {
         // eslint-disable-next-line node/no-deprecated-api
-        const filePath = stripVersion(url.parse(req.url).pathname);
-        const sendOpts = filePath === req.url ? sendOptsNonVersioned : opts.sendOptions;
+        const urlPath = url.parse(req.url).pathname;
+        const filePath = stripVersion(urlPath);
+        const versionMatch = filePath !== req.url && versions[filePath] && versions[filePath].versionedPath === urlPath;
+        const sendOpts = versionMatch ? opts.sendOptions : sendOptsNonVersioned;
 
         return send(req, filePath, sendOpts);
     };

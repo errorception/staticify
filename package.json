@@ -27,15 +27,15 @@
     "index.js"
   ],
   "dependencies": {
-    "ignore-by-default": "^1.0.1",
+    "ignore-by-default": "^2.0.0",
     "memoizee": "^0.4.14",
     "send": "^0.17.1"
   },
   "devDependencies": {
-    "mocha": "^7.2.0",
+    "mocha": "^8.0.1",
     "nyc": "^15.1.0",
     "should": "^13.2.3",
-    "xo": "^0.30.0"
+    "xo": "^0.32.0"
   },
   "engines": {
     "node": ">=10"

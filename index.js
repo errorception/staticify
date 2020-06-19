@@ -140,6 +140,7 @@ const staticify = (root, options) => {
     const replacePaths = fileContents => {
         return Object.keys(versions).sort((a, b) => {
             return b.length - a.length;
+        // eslint-disable-next-line unicorn/no-reduce
         }).reduce((f, url) => {
             return f.replace(new RegExp(url, 'g'), getVersionedPath(url));
         }, fileContents);

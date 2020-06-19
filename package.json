@@ -12,7 +12,8 @@
   "scripts": {
     "mocha": "mocha --exit",
     "xo": "xo",
-    "test": "npm run xo && npm run mocha",
+    "tsc": "tsc --esModuleInterop --noEmit test/index.ts",
+    "test": "npm run xo && npm run mocha && npm run tsc",
     "test:cov": "nyc npm run test"
   },
   "keywords": [
@@ -24,7 +25,8 @@
     "expressjs"
   ],
   "files": [
-    "index.js"
+    "index.js",
+    "index.d.ts"
   ],
   "dependencies": {
     "ignore-by-default": "^2.0.0",
@@ -32,9 +34,13 @@
     "send": "^0.17.1"
   },
   "devDependencies": {
+    "@types/express": "^4.17.6",
+    "@types/express-serve-static-core": "^4.17.7",
+    "@types/send": "^0.14.5",
     "mocha": "^8.0.1",
     "nyc": "^15.1.0",
     "should": "^13.2.3",
+    "typescript": "^3.9.5",
     "xo": "^0.32.0"
   },
   "engines": {

@@ -44,6 +44,10 @@ And in your template:
 <link href="${getVersionedPath('/home.css')}" rel="stylesheet">
 ```
 
+### TypeScript
+
+staticify ships with official type declarations for TypeScript out of the box.
+
 ## Options
 
 Options are specified as the second parameter to `staticify`:

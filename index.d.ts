@@ -1,6 +1,6 @@
-import {SendOptions} from 'send';
 import {RequestHandler} from 'express';
 import {Request} from 'express-serve-static-core';
+import {SendOptions} from 'send';
 
 export type StaticifyOptions = {
     /**

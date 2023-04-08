@@ -21,13 +21,12 @@ middlewareSuite.after(done => {
     server.close(done);
 });
 
-middlewareSuite('should call next without error if 404', done => {
+middlewareSuite('should call next without error if 404', () => {
     server.once('request', (req, res) => {
         staticify(ROOT).middleware(req, res, err => {
             assert.not.ok(err);
 
             res.end();
-            done();
         });
     });
 

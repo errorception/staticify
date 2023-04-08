@@ -24,26 +24,23 @@ serveShortSuite.after(done => {
     server.close(done);
 });
 
-serveShortSuite('should serve files without a hash tag', done => {
+serveShortSuite('should serve files without a hash tag', () => {
     http.get('http://localhost:12321/index.js', res => {
         assert.ok(res.headers['cache-control'].includes('max-age=0'));
         assert.is(res.statusCode, 200);
-        done();
     });
 });
 
-serveShortSuite('should serve files with a hash tag', done => {
+serveShortSuite('should serve files with a hash tag', () => {
     http.get('http://localhost:12321/index.4e2502b.js', res => {
         assert.ok(res.headers['cache-control'].includes('max-age=31536000'));
         assert.is(res.statusCode, 200);
-        done();
     });
 });
 
-serveShortSuite('should 404 correctly', done => {
+serveShortSuite('should 404 correctly', () => {
     http.get('http://localhost:12321/non.existant.file.js', res => {
         assert.is(res.statusCode, 404);
-        done();
     });
 });
 
@@ -63,26 +60,23 @@ serveLongSuite.after(done => {
     server.close(done);
 });
 
-serveLongSuite('should serve files without a hash tag', done => {
+serveLongSuite('should serve files without a hash tag', () => {
     http.get('http://localhost:12321/index.js', res => {
         assert.ok(res.headers['cache-control'].includes('max-age=0'));
         assert.is(res.statusCode, 200);
-        done();
     });
 });
 
-serveLongSuite('should serve files with a hash tag', done => {
+serveLongSuite('should serve files with a hash tag', () => {
     http.get('http://localhost:12321/index.4e2502b01a4c92b0a51b1a5a3271eab6.js', res => {
         assert.ok(res.headers['cache-control'].includes('max-age=31536000'));
         assert.is(res.statusCode, 200);
-        done();
     });
 });
 
-serveLongSuite('should 404 correctly', done => {
+serveLongSuite('should 404 correctly', () => {
     http.get('http://localhost:12321/non.existant.file.js', res => {
         assert.is(res.statusCode, 404);
-        done();
     });
 });
 
@@ -107,19 +101,17 @@ serveCustomOptsSuite.after(done => {
     server.close(done);
 });
 
-serveCustomOptsSuite('should serve files without a hash tag', done => {
+serveCustomOptsSuite('should serve files without a hash tag', () => {
     http.get('http://localhost:12321/index.js', res => {
         assert.ok(res.headers['cache-control'].includes('max-age=7200'));
         assert.is(res.statusCode, 200);
-        done();
     });
 });
 
-serveCustomOptsSuite('should serve files with a hash tag', done => {
+serveCustomOptsSuite('should serve files with a hash tag', () => {
     http.get('http://localhost:12321/index.4e2502b.js', res => {
         assert.ok(res.headers['cache-control'].includes('max-age=3600'));
         assert.is(res.statusCode, 200);
-        done();
     });
 });
 

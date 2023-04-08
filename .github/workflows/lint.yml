@@ -36,4 +36,4 @@ jobs:
         run: npm run lint
 
       - name: Check types
-        run: npm run tsc
+        run: npm run tsd

@@ -16,7 +16,7 @@
     "fix": "xo --fix",
     "tsc": "tsc --esModuleInterop --noEmit test/index.ts",
     "test": "npm run lint && npm run mocha && npm run tsc",
-    "test:cov": "c8 npm run test"
+    "test:cov": "c8 npm run mocha"
   },
   "keywords": [
     "static",

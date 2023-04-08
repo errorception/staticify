@@ -1,8 +1,8 @@
 # staticify
 
-[![npm version](https://img.shields.io/npm/v/staticify)](https://www.npmjs.com/package/staticify)
-[![Tests](https://github.com/errorception/staticify/actions/workflows/test.yml/badge.svg)](https://github.com/errorception/staticify/actions/workflows/test.yml)
-[![Coverage Status](https://img.shields.io/coveralls/github/errorception/staticify/main)](https://coveralls.io/github/errorception/staticify?branch=main)
+[![npm version](https://img.shields.io/npm/v/staticify?logo=npm&logoColor=fff)](https://www.npmjs.com/package/staticify)
+[![Test Status](https://img.shields.io/github/actions/workflow/status/errorception/staticify/test.yml?branch=main&label=Tests&logo=github)](https://github.com/errorception/staticify/actions/workflows/test.yml?query=branch%3Amain)
+[![Coverage Status](https://img.shields.io/coveralls/github/errorception/staticify/main?logo=coveralls&logoColor=fff)](https://coveralls.io/github/errorception/staticify?branch=main)
 
 A better static asset handler for Node.js/Express.js.
 
@@ -179,4 +179,4 @@ staticify.serve(req, {
 
 ## License
 
-MIT
+[MIT](LICENSE)

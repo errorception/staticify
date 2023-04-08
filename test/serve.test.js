@@ -10,18 +10,16 @@ const ROOT = path.join(__dirname, '..');
 
 const serveShortSuite = suite('.serve short hash');
 
-let server;
-
-serveShortSuite.before(done => {
+serveShortSuite.before(async context => {
     const staticifyObj = staticify(ROOT);
-    server = http.createServer((req, res) => {
+    context.server = http.createServer((req, res) => {
         staticifyObj.serve(req).pipe(res);
     });
-    server.listen(12_321, done);
+    await context.server.listen(12_321);
 });
 
-serveShortSuite.after(done => {
-    server.close(done);
+serveShortSuite.after(async context => {
+    await context.server.close();
 });
 
 serveShortSuite('should serve files without a hash tag', () => {
@@ -48,16 +46,16 @@ serveShortSuite.run();
 
 const serveLongSuite = suite('.serve long hash');
 
-serveLongSuite.before(done => {
+serveLongSuite.before(async context => {
     const staticifyObj = staticify(ROOT, {shortHash: false});
-    server = http.createServer((req, res) => {
+    context.server = http.createServer((req, res) => {
         staticifyObj.serve(req).pipe(res);
     });
-    server.listen(12_321, done);
+    await context.server.listen(12_321);
 });
 
-serveLongSuite.after(done => {
-    server.close(done);
+serveLongSuite.after(async context => {
+    await context.server.close();
 });
 
 serveLongSuite('should serve files without a hash tag', () => {
@@ -84,21 +82,21 @@ serveLongSuite.run();
 
 const serveCustomOptsSuite = suite('.serve custom serve options');
 
-serveCustomOptsSuite.before(done => {
+serveCustomOptsSuite.before(async context => {
     const staticifyObj = staticify(ROOT, {
         maxAgeNonHashed: 7200 * 1000,
         sendOptions: {
             maxAge: 3600 * 1000 // milliseconds
         }
     });
-    server = http.createServer((req, res) => {
+    context.server = http.createServer((req, res) => {
         staticifyObj.serve(req).pipe(res);
     });
-    server.listen(12_321, done);
+    await context.server.listen(12_321);
 });
 
-serveCustomOptsSuite.after(done => {
-    server.close(done);
+serveCustomOptsSuite.after(async context => {
+    await context.server.close();
 });
 
 serveCustomOptsSuite('should serve files without a hash tag', () => {

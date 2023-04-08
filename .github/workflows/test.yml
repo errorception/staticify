@@ -2,8 +2,9 @@ name: Tests
 
 on:
   push:
-    branches-ignore:
-      - "dependabot/**"
+    branches:
+      - main
+      - "!dependabot/**"
   pull_request:
   workflow_dispatch:
 
@@ -41,6 +42,6 @@ jobs:
 
       - name: Run Coveralls
         uses: coverallsapp/github-action@v2
-        if: matrix.node == 12 && startsWith(matrix.os, 'ubuntu')
+        if: startsWith(matrix.os, 'ubuntu') && matrix.node == 18
         with:
           github-token: "${{ secrets.GITHUB_TOKEN }}"

@@ -27,7 +27,7 @@ describe('Options work', () => {
 
     it('`includeAll: true` works', () => {
         const versions = staticify(ROOT, {includeAll: true})._versions;
-        const matches = Object.keys(versions).filter(ver => ver.match(/node_modules|\.git/)).length > 0;
+        const matches = Object.keys(versions).some(ver => ver.match(/node_modules|\.git/));
 
         matches.should.be.true();
     });
@@ -101,7 +101,7 @@ describe('.serve', () => {
             server = http.createServer((req, res) => {
                 staticifyObj.serve(req).pipe(res);
             });
-            server.listen(12321, done);
+            server.listen(12_321, done);
         });
 
         after(done => {
@@ -140,7 +140,7 @@ describe('.serve', () => {
             server = http.createServer((req, res) => {
                 staticifyObj.serve(req).pipe(res);
             });
-            server.listen(12321, done);
+            server.listen(12_321, done);
         });
 
         after(done => {
@@ -184,7 +184,7 @@ describe('.serve', () => {
             server = http.createServer((req, res) => {
                 staticifyObj.serve(req).pipe(res);
             });
-            server.listen(12321, done);
+            server.listen(12_321, done);
         });
 
         after(done => {
@@ -214,7 +214,7 @@ describe('.middleware', () => {
 
     before(done => {
         server = http.createServer();
-        server.listen(12321, done);
+        server.listen(12_321, done);
     });
 
     after(done => {

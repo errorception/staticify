@@ -11,10 +11,11 @@
   },
   "scripts": {
     "mocha": "mocha --exit",
+    "lint": "xo",
     "xo": "xo",
     "fix": "xo --fix",
     "tsc": "tsc --esModuleInterop --noEmit test/index.ts",
-    "test": "npm run xo && npm run mocha && npm run tsc",
+    "test": "npm run lint && npm run mocha && npm run tsc",
     "test:cov": "c8 npm run test"
   },
   "keywords": [
@@ -39,25 +40,42 @@
     "@types/express-serve-static-core": "^4.17.33",
     "@types/send": "^0.17.1",
     "c8": "^7.13.0",
-    "mocha": "^8.4.0",
+    "mocha": "^9.2.2",
     "should": "^13.2.3",
     "typescript": "^4.9.5",
-    "xo": "^0.39.1"
+    "xo": "^0.52.4"
   },
   "engines": {
-    "node": ">=10"
+    "node": ">=12"
   },
   "xo": {
     "space": 4,
     "rules": {
+      "arrow-body-style": "off",
       "capitalized-comments": "off",
-      "spaced-comment": "off",
+      "comma-dangle": [
+        "error",
+        "never"
+      ],
       "func-style": [
         "error",
         "expression"
       ],
+      "operator-linebreak": [
+        "error",
+        "after"
+      ],
+      "space-before-function-paren": [
+        "error",
+        "never"
+      ],
+      "spaced-comment": "off",
       "unicorn/better-regex": "off",
-      "unicorn/prevent-abbreviations": "off"
+      "unicorn/prefer-module": "off",
+      "unicorn/prevent-abbreviations": "off",
+      "@typescript-eslint/consistent-type-imports": "off",
+      "@typescript-eslint/comma-dangle": "off",
+      "@typescript-eslint/consistent-type-definitions": "off"
     },
     "overrides": [
       {

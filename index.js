@@ -114,7 +114,7 @@ const staticify = (root, options) => {
     };
 
     const serve = req => {
-        // eslint-disable-next-line node/no-deprecated-api
+        // eslint-disable-next-line n/no-deprecated-api
         const filePath = stripVersion(url.parse(req.url).pathname);
         const sendOpts = filePath === req.url ? sendOptsNonVersioned : opts.sendOptions;
 

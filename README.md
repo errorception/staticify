@@ -1,11 +1,8 @@
 # staticify
 
-[![NPM version](https://img.shields.io/npm/v/staticify.svg)](https://www.npmjs.com/package/staticify)
-[![Total alerts](https://img.shields.io/lgtm/alerts/g/errorception/staticify.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/errorception/staticify/alerts/)
-[![Build Status](https://github.com/errorception/staticify/workflows/Tests/badge.svg)](https://github.com/errorception/staticify/actions?workflow=Tests)
-[![Coverage Status](https://img.shields.io/coveralls/github/errorception/staticify/master.svg)](https://coveralls.io/github/errorception/staticify?branch=master)
-[![dependencies Status](https://img.shields.io/david/errorception/staticify.svg)](https://david-dm.org/errorception/staticify)
-[![devDependencies Status](https://img.shields.io/david/dev/errorception/staticify.svg)](https://david-dm.org/errorception/staticify?type=dev)
+[![npm version](https://img.shields.io/npm/v/staticify)](https://www.npmjs.com/package/staticify)
+[![Tests](https://github.com/errorception/staticify/actions/workflows/test.yml/badge.svg)](https://github.com/errorception/staticify/actions/workflows/test.yml)
+[![Coverage Status](https://img.shields.io/coveralls/github/errorception/staticify/master)](https://coveralls.io/github/errorception/staticify?branch=master)
 
 A better static asset handler for Node.js/Express.js.
 

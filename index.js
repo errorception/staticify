@@ -59,7 +59,7 @@ const staticify = (root, options) => {
 
         const files = fs.readdirSync(directory);
 
-        files.forEach(file => {
+        for (const file of files) {
             const absFilePath = path.posix.join(directory, file);
             const stat = fs.statSync(absFilePath);
 
@@ -68,7 +68,7 @@ const staticify = (root, options) => {
             } else if (stat.isFile()) {
                 vers[`/${path.posix.relative(root, absFilePath)}`] = {absFilePath};
             }
-        });
+        }
 
         return vers;
     };
@@ -140,7 +140,7 @@ const staticify = (root, options) => {
     const replacePaths = fileContents => {
         return Object.keys(versions).sort((a, b) => {
             return b.length - a.length;
-        // eslint-disable-next-line unicorn/no-reduce
+        // eslint-disable-next-line unicorn/no-array-reduce
         }).reduce((f, url) => {
             return f.replace(new RegExp(url, 'g'), getVersionedPath(url));
         }, fileContents);

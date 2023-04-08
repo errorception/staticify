@@ -2,7 +2,7 @@
 
 [![npm version](https://img.shields.io/npm/v/staticify)](https://www.npmjs.com/package/staticify)
 [![Tests](https://github.com/errorception/staticify/actions/workflows/test.yml/badge.svg)](https://github.com/errorception/staticify/actions/workflows/test.yml)
-[![Coverage Status](https://img.shields.io/coveralls/github/errorception/staticify/master)](https://coveralls.io/github/errorception/staticify?branch=master)
+[![Coverage Status](https://img.shields.io/coveralls/github/errorception/staticify/main)](https://coveralls.io/github/errorception/staticify?branch=main)
 
 A better static asset handler for Node.js/Express.js.
 

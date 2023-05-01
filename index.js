@@ -67,6 +67,7 @@ const staticify = (root, options) => {
                 buildVersionHash(absFilePath, root, vers); // Whee!
             } else if (stat.isFile()) {
                 vers[`/${path.posix.relative(root, absFilePath)}`] = {absFilePath};
+                cachedMakeHash(absFilePath); // Just to warm-up cache
             }
         }
 
